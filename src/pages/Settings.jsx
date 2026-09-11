@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { Button } from "../components/ui/Button"
-import { updateUserPassword, getUserByEmail } from "../data/users"
+import { updateUserPasswordHash, getUserByEmail } from "../data/users"
+import { hashPassword, verifyPassword } from "../lib/crypto"
 import { Input } from "../components/ui/Input"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/Card"
 import { User, Lock, Eye, EyeOff } from "lucide-react"
 import { cn } from "../lib/utils"
-
 import { useUser } from "../context/UserContext"
 
 export default function Settings() {
@@ -22,47 +22,48 @@ export default function Settings() {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [securityMessage, setSecurityMessage] = useState({ type: "", text: "" })
 
-    const handleUpdatePassword = () => {
+    const handleUpdatePassword = async () => {
         setSecurityMessage({ type: "", text: "" })
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            setSecurityMessage({ type: "error", text: "All fields are required." })
+            setSecurityMessage({ type: "error", text: "Semua field wajib diisi." })
+            return
+        }
+
+        if (newPassword.length < 8) {
+            setSecurityMessage({ type: "error", text: "Password baru minimal 8 karakter." })
             return
         }
 
         if (newPassword !== confirmPassword) {
-            setSecurityMessage({ type: "error", text: "New password and confirmation do not match." })
+            setSecurityMessage({ type: "error", text: "Password baru dan konfirmasi tidak cocok." })
             return
         }
 
-        // Actually, we should check against the user's current password if possible.
-        // But the context user object doesn't have the password.
-        // For this mock, I will assume the 'currentPassword' check logic:
-        // logic was: if (currentPassword !== "inspektorat") ...
-        // We need to change that.
-
-        // Since we don't have easy access to the real password in Context (security best practice not to),
-        // we might skip strict current-password validation OR fetch it using getUserByEmail(user.email).
-
-        // Let's try to fetch it to validte:
-        // import { getUserByEmail } from "../data/users" needed if we want to validate.
-
-        // Validate current password against storage
+        // Validasi password lama menggunakan hash comparison
         const userRecord = getUserByEmail(user.email)
-        if (!userRecord || userRecord.password !== currentPassword) {
-            setSecurityMessage({ type: "error", text: "Incorrect current password." })
+        if (!userRecord) {
+            setSecurityMessage({ type: "error", text: "Sesi tidak valid. Silakan login ulang." })
             return
         }
 
-        // Simulating success & Update
-        const success = updateUserPassword(user.email, newPassword)
+        const isCurrentValid = await verifyPassword(currentPassword, userRecord.passwordHash)
+        if (!isCurrentValid) {
+            setSecurityMessage({ type: "error", text: "Password lama tidak benar." })
+            return
+        }
+
+        // Hash password baru sebelum disimpan
+        const newHash = await hashPassword(newPassword)
+        const success = updateUserPasswordHash(user.email, newHash)
+
         if (success) {
-            setSecurityMessage({ type: "success", text: "Password updated successfully! Please login with new password next time." })
+            setSecurityMessage({ type: "success", text: "Password berhasil diubah. Gunakan password baru saat login berikutnya." })
             setCurrentPassword("")
             setNewPassword("")
             setConfirmPassword("")
         } else {
-            setSecurityMessage({ type: "error", text: "Failed to update password." })
+            setSecurityMessage({ type: "error", text: "Gagal mengubah password. Coba lagi." })
         }
     }
 

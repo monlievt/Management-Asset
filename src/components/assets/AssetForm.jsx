@@ -1,23 +1,19 @@
 import { Button } from "../ui/Button"
 import { Input } from "../ui/Input"
 import { useState } from "react"
+import { EMPLOYEE_LIST } from "../../data/employees"
+import { AlertTriangle } from "lucide-react"
 
-const EMPLOYEE_LIST = [
-    "Ir. WIJIONO, ST,M.Mkes", "SIGIT PRASETYO,S.IP.MAP", "SUYATNO,SH", "DIDIK AGIT W, SE.MAP", "NUGRAHENI RAHAYU S, SE,M.Si",
-    "DIDIK SUPRIYANTO,S.Sos.M.Si", "EKO DARMINTO,SE.M.Si", "Ir. AGUNG SRIYONO", "DJOKO PURNOMO,SE", "AGUNG YUDYANA, S.H., M.H.",
-    "DWI SUCI RAHAYU, SE.", "Ir. BENNO HERA T.", "TOTOK SUBIANTO, SE", "BASORI, ST", "RIKE ARSHINTA MAYASARI,  ST,M.A.P",
-    "WINDU SETIYADI, ST", "NIKEN SRI PALUPI,SE", "HAPPY RAHMAWATI,SE", "ENI SUMAWATI, SE", "UTARI PRASETYANI,SE",
-    "FENY RATNAWATI,SE", "UMROTUL MAHFUDHOH,  S.Ak.", "SIGIH SETIONO,  S.Ak.", "NANDITO MONLIEV PASSA,S.Kom", "SULIKAH,S.TP.,M.A.P",
-    "PUSPANAGARI PUTRI RIDANTI,S.Ak", "CHOIRUNNISA,S.A.", "FEREN FEBRIYANTI,S.Ak", "ANANDA SEPTA WILLYANDA,S.E.", "ADHI TRIYANTO, S.Tr.I.P",
-    "FERYAL NADA AZIZAH,A.Md.Ak", "NADIAH FIRDAUSSINTA D,A.Md.Ak", "CHRIS TRYANTO MARTA P P,A,Md.Ak", "DESTY AYU SAPUTRI,A.Md.Ak", "MUHAMAD IQBAL MAULIDI,A.Md.Ak",
-    "ABYADH NURUTTIMAMI FR, A.Md.Ak", "ANINDYA FAUZIYAH BASUKI,A.Md.Ak", "ANDIKA PUTRA HARDYANSYAH,A,Md.Ak", "MUHAMMAD IDHAM FIRDAUS,A.Md.Ak", "CAHYA FITRIA ARDIANI, A. Md",
-    "ROEKAN, ST", "SULIS SETYAWATI, SE", "YENI KRISTUTI", "KATIRAN", "KUSNUL KOTIMAH",
-    "HARYADI", "DYAH WIDI MRANANI, SE", "NANANG MARDIANTORO, S.Pd", "NUVENTIN ASNA PUTRI, S.Ak", "PUTRI PATRISIA FERNANDA, S.M.",
-    "IRMALA PRASISTYA CAHYANING P, S.Ak", "KUKUH ARI FIRMANSYAH, S.H", "ZAKIATUL MUFARRIHAH, ST", "ERNI AGUSTINA, S.H.", "INDAH NABILLA HASNA, S.T.",
-    "DIAH AJENG MELIASARI, S.H", "MOH. MUHADHIR SYAFAAT, S.T.", "KARTIKA KUSUMA DEWI, S.E.", "AJI SURYA SAKSAMA, S.T", "MELA ENDRIANI, S.E.",
-    "YOPI ADI PRAYOGA, S.T.", "DEVI SELVIA, S.E.", "MUHAMMAD ADITYA K, S.E", "RORO PUTRI SETIANINGAYU,S.Tr.E", "TOMMY KURNIAWAN, S.E",
-    "FELLIS ENRICHA PUTRI, S.Ak.", "FRYZA RACHMANIA M, A.Md.Kom", "HARMINTO", "SUPRIYADI", "APRILIYAN SUSANTO"
-].sort()
+/** Hitung estimasi sisa kapasitas localStorage dalam KB */
+function getLocalStorageUsageKB() {
+    let total = 0
+    for (const key in localStorage) {
+        if (!localStorage.hasOwnProperty(key)) continue
+        total += (localStorage[key].length + key.length) * 2 // UTF-16
+    }
+    return Math.round(total / 1024)
+}
+
 
 export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} }) {
     const [formData, setFormData] = useState(initialData || {
@@ -42,8 +38,9 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
         qrCode: "",
         assignee: "",
         status: "Available",
-        purchaseDate: new Date().toISOString().split('T')[0],
     })
+    const [imageError, setImageError] = useState("")
+    const [storageWarning, setStorageWarning] = useState("")
 
     const formatRupiah = (value) => {
         if (!value) return ""
@@ -72,26 +69,54 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                // Resize image to save space
-                const img = new Image()
-                img.src = reader.result
-                img.onload = () => {
-                    const canvas = document.createElement('canvas')
-                    const ctx = canvas.getContext('2d')
-                    const MAX_WIDTH = 800
-                    const scaleSize = MAX_WIDTH / img.width
-                    canvas.width = MAX_WIDTH
-                    canvas.height = img.height * scaleSize
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7)
-                    setFormData(prev => ({ ...prev, foto: compressedBase64 }))
-                }
-            }
-            reader.readAsDataURL(file)
+        setImageError("")
+        setStorageWarning("")
+
+        if (!file) return
+
+        // Batasi ukuran file maks 2MB sebelum kompresi
+        const MAX_FILE_SIZE_MB = 2
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+            setImageError(`Ukuran file terlalu besar (${(file.size / 1024 / 1024).toFixed(1)}MB). Maksimal ${MAX_FILE_SIZE_MB}MB.`)
+            e.target.value = ""
+            return
         }
+
+        const reader = new FileReader()
+        reader.onloadend = () => {
+            // Resize + kompresi agresif untuk menghemat localStorage (max 5MB)
+            const img = new Image()
+            img.src = reader.result
+            img.onload = () => {
+                const canvas = document.createElement('canvas')
+                const ctx = canvas.getContext('2d')
+                // Kompres ke maks 600px lebar dan quality 0.5 (lebih hemat dari sebelumnya 800px/0.7)
+                const MAX_WIDTH = 600
+                const scaleSize = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1
+                canvas.width = Math.round(img.width * scaleSize)
+                canvas.height = Math.round(img.height * scaleSize)
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5)
+
+                // Periksa sisa kapasitas localStorage setelah kompresi
+                const base64SizeKB = Math.round(compressedBase64.length * 0.75 / 1024)
+                const usedKB = getLocalStorageUsageKB()
+                const LIMIT_KB = 4096 // ~4MB buffer dari 5MB limit
+
+                if (usedKB + base64SizeKB > LIMIT_KB) {
+                    setImageError(`Penyimpanan hampir penuh (${usedKB}KB/${LIMIT_KB}KB). Hapus beberapa aset lama atau foto yang ada sebelum menambah foto baru.`)
+                    e.target.value = ""
+                    return
+                }
+
+                if (usedKB > LIMIT_KB * 0.75) {
+                    setStorageWarning(`⚠️ Penyimpanan terpakai ${usedKB}KB dari ~${LIMIT_KB}KB. Segera backup data dan hubungi admin untuk migrasi ke database.`)
+                }
+
+                setFormData(prev => ({ ...prev, foto: compressedBase64 }))
+            }
+        }
+        reader.readAsDataURL(file)
     }
 
     const handleSubmit = (e) => {
@@ -239,14 +264,27 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
                 {/* Row 6: Photo */}
                 <div className="col-span-4 space-y-1">
                     <label className="text-xs font-medium">Foto Aset <span className="text-red-500">*</span></label>
+                    <p className="text-xs text-secondary-400">Maks 2MB. File akan dikompres otomatis (≤600px, JPEG 50%).</p>
                     <div className="flex gap-2">
                         <Input type="file" accept="image/*" onChange={handleImageUpload} required={!formData.foto} className="h-8 text-sm w-full" />
                         {formData.foto && (
-                            <div className="h-8 w-8 relative">
+                            <div className="h-8 w-8 relative flex-shrink-0">
                                 <img src={formData.foto} alt="Preview" className="h-full w-full object-cover rounded" />
                             </div>
                         )}
                     </div>
+                    {imageError && (
+                        <div className="flex items-start gap-1.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2 mt-1">
+                            <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                            <span>{imageError}</span>
+                        </div>
+                    )}
+                    {storageWarning && !imageError && (
+                        <div className="flex items-start gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mt-1">
+                            <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                            <span>{storageWarning}</span>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="flex justify-end space-x-2 pt-2">

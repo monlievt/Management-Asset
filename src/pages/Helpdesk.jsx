@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { Plus, Search, Filter, MoreHorizontal, MessageSquare, Edit, Trash, Printer } from "lucide-react"
+import { Plus, Search, Edit, Trash, Printer } from "lucide-react"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table"
@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/Badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Modal } from "../components/ui/Modal"
 import { TicketForm } from "../components/helpdesk/TicketForm"
+import { CanDo } from "../lib/rbac"
 
 const initialTickets = [
     { id: 1, subject: "Printer in HR not working", requester: "Sarah Jones", priority: "High", status: "Open", date: new Date().toISOString().split('T')[0] },
@@ -27,6 +28,7 @@ export default function Helpdesk() {
     const [searchTerm, setSearchTerm] = useState("")
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedTicket, setSelectedTicket] = useState(null)
+    const [ticketToDelete, setTicketToDelete] = useState(null)
     const [isPrintMenuOpen, setIsPrintMenuOpen] = useState(false)
     const printMenuRef = useRef(null)
 
@@ -44,15 +46,21 @@ export default function Helpdesk() {
         if (selectedTicket && selectedTicket.id) {
             setTickets(tickets.map(t => t.id === selectedTicket.id ? { ...ticketData, id: t.id, date: t.date } : t))
         } else {
-            setTickets([{ id: tickets.length + 1, ...ticketData, status: "Open", date: new Date().toISOString().split('T')[0] }, ...tickets])
+            // Gunakan Date.now() sebagai ID unik untuk menghindari duplikasi
+            setTickets([{ id: Date.now(), ...ticketData, status: "Open", date: new Date().toISOString().split('T')[0] }, ...tickets])
         }
         setIsModalOpen(false)
         setSelectedTicket(null)
     }
 
-    const handleDeleteTicket = (id) => {
-        if (window.confirm("Are you sure you want to delete this ticket?")) {
-            setTickets(tickets.filter(t => t.id !== id))
+    const handleDeleteTicket = (ticket) => {
+        setTicketToDelete(ticket)
+    }
+
+    const confirmDeleteTicket = () => {
+        if (ticketToDelete) {
+            setTickets(tickets.filter(t => t.id !== ticketToDelete.id))
+            setTicketToDelete(null)
         }
     }
 
@@ -330,16 +338,20 @@ export default function Helpdesk() {
                                     </TableCell>
                                     <TableCell>{ticket.date}</TableCell>
                                     <TableCell className="text-right">
-                                        <div className="flex justify-end space-x-2">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50" onClick={() => {
-                                                setSelectedTicket(ticket)
-                                                setIsModalOpen(true)
-                                            }}>
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteTicket(ticket.id)}>
-                                                <Trash className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex justify-end space-x-2">
+                                            <CanDo permission="helpdesk.edit">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50" onClick={() => {
+                                                    setSelectedTicket(ticket)
+                                                    setIsModalOpen(true)
+                                                }}>
+                                                    <Edit className="h-4 w-4" />
+                                                </Button>
+                                            </CanDo>
+                                            <CanDo permission="helpdesk.delete">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteTicket(ticket)}>
+                                                    <Trash className="h-4 w-4" />
+                                                </Button>
+                                            </CanDo>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -355,7 +367,7 @@ export default function Helpdesk() {
                     setIsModalOpen(false)
                     setSelectedTicket(null)
                 }}
-                title={selectedTicket ? "Edit Ticket" : "Submit New Ticket"}
+                title={selectedTicket ? "Edit Ticket" : "Submit Tiket Baru"}
             >
                 <TicketForm
                     initialData={selectedTicket}
@@ -365,6 +377,23 @@ export default function Helpdesk() {
                     }}
                     onSubmit={handleSaveTicket}
                 />
+            </Modal>
+
+            {/* Modal Konfirmasi Hapus */}
+            <Modal
+                isOpen={!!ticketToDelete}
+                onClose={() => setTicketToDelete(null)}
+                title="Konfirmasi Hapus Tiket"
+                className="max-w-sm"
+            >
+                <div className="space-y-4 pt-2">
+                    <p>Apakah Anda yakin ingin menghapus tiket <strong className="font-semibold text-secondary-900">{ticketToDelete?.subject}</strong>?</p>
+                    <p className="text-sm text-secondary-500">Tindakan ini tidak dapat dibatalkan.</p>
+                    <div className="flex justify-end space-x-2 pt-4">
+                        <Button variant="outline" onClick={() => setTicketToDelete(null)}>Batal</Button>
+                        <Button variant="danger" onClick={confirmDeleteTicket}>Hapus Tiket</Button>
+                    </div>
+                </div>
             </Modal>
         </div>
     )

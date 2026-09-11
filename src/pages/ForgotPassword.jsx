@@ -13,11 +13,12 @@ export default function ForgotPassword() {
     const handleSubmit = (e) => {
         e.preventDefault()
         setIsLoading(true)
-        // Simulate API call
+        // Fitur reset password via email belum diaktifkan.
+        // Tampilkan instruksi untuk menghubungi admin.
         setTimeout(() => {
             setIsSubmitted(true)
             setIsLoading(false)
-        }, 1500)
+        }, 500)
     }
 
     return (
@@ -61,15 +62,27 @@ export default function ForgotPassword() {
                     </form>
                 ) : (
                     <div className="text-center space-y-4">
-                        <p className="text-sm text-secondary-600">
-                            Did not receive the email? Check your spam folder or try another email address.
+                        <p className="text-sm text-secondary-700 font-medium">
+                            Fitur reset password otomatis belum tersedia.
                         </p>
+                        <p className="text-sm text-secondary-600">
+                            Silakan hubungi <strong>Admin SIM-TIK</strong> untuk mereset password Anda.
+                        </p>
+                        <div className="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 text-left text-sm text-blue-800">
+                            <p className="font-medium mb-1">Cara mereset password:</p>
+                            <ol className="list-decimal list-inside space-y-1">
+                                <li>Hubungi Admin melalui Subbagian Umum</li>
+                                <li>Minta reset password akun SIM-TIK</li>
+                                <li>Gunakan password sementara yang diberikan</li>
+                                <li>Ganti password di menu Settings setelah login</li>
+                            </ol>
+                        </div>
                         <Button
                             variant="outline"
                             className="w-full"
                             onClick={() => setIsSubmitted(false)}
                         >
-                            Try another email
+                            Kembali
                         </Button>
                     </div>
                 )}

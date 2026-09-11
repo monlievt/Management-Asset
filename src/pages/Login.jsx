@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { useRef } from "react"
 import { getUserByEmail } from "../data/users"
+import { verifyPassword } from "../lib/crypto"
 import { useNavigate, Link } from "react-router-dom"
 import { useUser } from "../context/UserContext"
 import { Lock, Eye, EyeOff } from "lucide-react"
@@ -18,36 +18,53 @@ export default function Login() {
     const { updateUser } = useUser()
 
     useEffect(() => {
-        const token = localStorage.getItem('simtik_auth')
+        const token = sessionStorage.getItem('simtik_auth_token')
         if (token) {
             navigate('/')
         }
     }, [navigate])
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
         setError("")
         setIsLoading(true)
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
             const user = getUserByEmail(email)
 
-            if (user && user.password === password) {
-                localStorage.setItem('simtik_auth', 'true')
-                // Store full user details to handle multi-user simulation
-                localStorage.setItem('simtik_user_details', JSON.stringify(user))
-
-                // Update global context state immediately
-                updateUser(user)
-
+            if (!user) {
+                setError("Email atau password tidak valid.")
                 setIsLoading(false)
+                return
+            }
+
+            // Verifikasi password menggunakan SHA-256 hash comparison
+            const isValid = await verifyPassword(password, user.passwordHash)
+
+            if (isValid) {
+                // Buat session token unik menggunakan crypto.randomUUID()
+                const sessionToken = crypto.randomUUID()
+
+                // Simpan di sessionStorage (bukan localStorage) agar sesi habis saat browser ditutup
+                sessionStorage.setItem('simtik_auth_token', sessionToken)
+
+                // Simpan data user publik (tanpa passwordHash) ke sessionStorage
+                const { passwordHash, ...publicUser } = user
+                sessionStorage.setItem('simtik_user_details', JSON.stringify(publicUser))
+
+                // Update global context
+                updateUser(publicUser)
+
                 navigate("/")
             } else {
-                setIsLoading(false)
-                setError("Invalid email or password.")
+                setError("Email atau password tidak valid.")
             }
-        }, 1000)
+        } catch (err) {
+            console.error("Login error:", err)
+            setError("Terjadi kesalahan sistem. Silakan coba lagi.")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -57,10 +74,10 @@ export default function Login() {
                     <Lock className="h-6 w-6 text-primary-600" />
                 </div>
                 <CardTitle className="text-2xl font-bold tracking-tight text-secondary-900">
-                    Sign in to your account
+                    Masuk ke Akun Anda
                 </CardTitle>
                 <p className="text-sm text-secondary-500">
-                    Enter your email and password to access SIM-TIK
+                    Masukkan email dan password untuk mengakses SIM-TIK
                 </p>
             </CardHeader>
             <CardContent>
@@ -77,10 +94,11 @@ export default function Login() {
                         <Input
                             id="email"
                             type="email"
-                            placeholder="name@example.com"
+                            placeholder="nama@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            autoComplete="email"
                         />
                     </div>
                     <div className="space-y-2">
@@ -89,7 +107,7 @@ export default function Login() {
                                 Password
                             </label>
                             <Link to="/login/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-500">
-                                Forgot password?
+                                Lupa password?
                             </Link>
                         </div>
                         <div className="relative">
@@ -99,11 +117,13 @@ export default function Login() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                autoComplete="current-password"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-500 hover:text-secondary-700 focus:outline-none"
+                                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                             >
                                 {showPassword ? (
                                     <EyeOff className="h-4 w-4" />
@@ -114,12 +134,12 @@ export default function Login() {
                         </div>
                     </div>
                     <Button className="w-full" type="submit" isLoading={isLoading}>
-                        Sign in
+                        Masuk
                     </Button>
                 </form>
             </CardContent>
             <CardFooter className="justify-center text-sm text-secondary-500">
-                Don't have an account? Contact Admin
+                Belum punya akun? Hubungi Admin
             </CardFooter>
         </Card>
     )

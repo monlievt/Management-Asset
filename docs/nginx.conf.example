@@ -1,0 +1,128 @@
+##
+## Konfigurasi Nginx untuk SIM-TIK (Sistem Informasi Manajemen TIK)
+## Inspektorat Kabupaten Trenggalek
+##
+## Cara pakai:
+## 1. Salin file ini ke /etc/nginx/sites-available/simtik
+## 2. Jalankan: sudo ln -s /etc/nginx/sites-available/simtik /etc/nginx/sites-enabled/
+## 3. Edit server_name dan root sesuai konfigurasi VPS Anda
+## 4. Jalankan: sudo nginx -t && sudo systemctl reload nginx
+##
+
+server {
+    listen 80;
+    server_name simtik.inspektorat-trenggalek.go.id;
+
+    # Redirect HTTP ke HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name simtik.inspektorat-trenggalek.go.id;
+
+    # =============================================
+    # SSL — Ganti dengan path sertifikat SSL Anda
+    # Jika menggunakan Let's Encrypt:
+    # ssl_certificate /etc/letsencrypt/live/simtik.inspektorat-trenggalek.go.id/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/simtik.inspektorat-trenggalek.go.id/privkey.pem;
+    # =============================================
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    # Hanya protokol TLS yang aman
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:MozSSL:10m;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # =============================================
+    # Root direktori dist hasil build Vite
+    # =============================================
+    root /var/www/simtik/dist;
+    index index.html;
+
+    # =============================================
+    # SECURITY HEADERS (AGENTS.md requirement)
+    # =============================================
+
+    # Strict Transport Security — paksa HTTPS untuk 1 tahun
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Cegah browser menebak MIME type
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Cegah aplikasi di-embed di iframe (anti-clickjacking)
+    add_header X-Frame-Options "DENY" always;
+
+    # Referrer Policy — batasi informasi referrer
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Content Security Policy — batasi sumber resource yang diizinkan
+    # Sesuaikan 'connect-src' jika ada API eksternal yang digunakan
+    add_header Content-Security-Policy "
+        default-src 'self';
+        script-src 'self' 'unsafe-inline';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: blob:;
+        connect-src 'self';
+        frame-ancestors 'none';
+        base-uri 'self';
+        form-action 'self';
+    " always;
+
+    # Permissions Policy — nonaktifkan fitur browser yang tidak dibutuhkan
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+
+    # =============================================
+    # Cache-Control untuk aset statis Vite
+    # =============================================
+
+    # Aset yang di-hash (JS, CSS) — cache selamanya (immutable)
+    location ~* \.(js|css|woff2?|ttf|otf|eot|ico|svg|webp|png|jpg|jpeg|gif)$ {
+        expires 1y;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;
+    }
+
+    # =============================================
+    # SPA fallback — semua route dikembalikan ke index.html
+    # (diperlukan untuk React Router BrowserRouter)
+    # =============================================
+    location / {
+        try_files $uri $uri/ /index.html;
+
+        # Jangan cache index.html agar selalu mendapat versi terbaru
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+
+    # =============================================
+    # Blokir akses ke file sensitif
+    # =============================================
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    # =============================================
+    # Logging
+    # =============================================
+    access_log /var/log/nginx/simtik_access.log;
+    error_log /var/log/nginx/simtik_error.log;
+
+    # Sembunyikan versi Nginx dari header respons
+    server_tokens off;
+}

@@ -3,6 +3,7 @@ import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye, ArrowDown, Arro
 import { Link } from "react-router-dom"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
+import { EMPLOYEE_LIST } from "../data/employees"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table"
 import { Badge } from "../components/ui/Badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
@@ -85,22 +86,8 @@ const ItemCombobox = ({ value, onChange, options, onSelect }) => {
     )
 }
 
-const TAKER_LIST = [
-    "Ir. WIJIONO, ST,M.Mkes", "SIGIT PRASETYO,S.IP.MAP", "SUYATNO,SH", "DIDIK AGIT W, SE.MAP", "NUGRAHENI RAHAYU S, SE,M.Si",
-    "DIDIK SUPRIYANTO,S.Sos.M.Si", "EKO DARMINTO,SE.M.Si", "Ir. AGUNG SRIYONO", "DJOKO PURNOMO,SE", "AGUNG YUDYANA, S.H., M.H.",
-    "DWI SUCI RAHAYU, SE.", "Ir. BENNO HERA T.", "TOTOK SUBIANTO, SE", "BASORI, ST", "RIKE ARSHINTA MAYASARI,  ST,M.A.P",
-    "WINDU SETIYADI, ST", "NIKEN SRI PALUPI,SE", "HAPPY RAHMAWATI,SE", "ENI SUMAWATI, SE", "UTARI PRASETYANI,SE",
-    "FENY RATNAWATI,SE", "UMROTUL MAHFUDHOH,  S.Ak.", "SIGIH SETIONO,  S.Ak.", "NANDITO MONLIEV PASSA,S.Kom", "SULIKAH,S.TP.,M.A.P",
-    "PUSPANAGARI PUTRI RIDANTI,S.Ak", "CHOIRUNNISA,S.A.", "FEREN FEBRIYANTI,S.Ak", "ANANDA SEPTA WILLYANDA,S.E.", "ADHI TRIYANTO, S.Tr.I.P",
-    "FERYAL NADA AZIZAH,A.Md.Ak", "NADIAH FIRDAUSSINTA D,A.Md.Ak", "CHRIS TRYANTO MARTA P P,A,Md.Ak", "DESTY AYU SAPUTRI,A.Md.Ak", "MUHAMAD IQBAL MAULIDI,A.Md.Ak",
-    "ABYADH NURUTTIMAMI FR, A.Md.Ak", "ANINDYA FAUZIYAH BASUKI,A.Md.Ak", "ANDIKA PUTRA HARDYANSYAH,A,Md.Ak", "MUHAMMAD IDHAM FIRDAUS,A.Md.Ak", "CAHYA FITRIA ARDIANI, A. Md",
-    "ROEKAN, ST", "SULIS SETYAWATI, SE", "YENI KRISTUTI", "KATIRAN", "KUSNUL KOTIMAH",
-    "HARYADI", "DYAH WIDI MRANANI, SE", "NANANG MARDIANTORO, S.Pd", "NUVENTIN ASNA PUTRI, S.Ak", "PUTRI PATRISIA FERNANDA, S.M.",
-    "IRMALA PRASISTYA CAHYANING P, S.Ak", "KUKUH ARI FIRMANSYAH, S.H", "ZAKIATUL MUFARRIHAH, ST", "ERNI AGUSTINA, S.H.", "INDAH NABILLA HASNA, S.T.",
-    "DIAH AJENG MELIASARI, S.H", "MOH. MUHADHIR SYAFAAT, S.T.", "KARTIKA KUSUMA DEWI, S.E.", "AJI SURYA SAKSAMA, S.T", "MELA ENDRIANI, S.E.",
-    "YOPI ADI PRAYOGA, S.T.", "DEVI SELVIA, S.E.", "MUHAMMAD ADITYA K, S.E", "RORO PUTRI SETIANINGAYU,S.Tr.E", "TOMMY KURNIAWAN, S.E",
-    "FELLIS ENRICHA PUTRI, S.Ak.", "FRYZA RACHMANIA M, A.Md.Kom", "HARMINTO", "SUPRIYADI", "APRILIYAN SUSANTO"
-].sort()
+// Gunakan daftar pegawai terpusat dari src/data/employees.js
+const TAKER_LIST = EMPLOYEE_LIST
 
 const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existingItems = [] }) => {
     const [formData, setFormData] = useState(initialData || {
