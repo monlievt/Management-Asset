@@ -69,11 +69,11 @@
     - 14.3 Kelola Master Ruangan Dinas (KIR Permendagri 47/2021)
     - 14.4 Kelola Kategori Aset TIK
     - 14.5 Konfigurasi Pejabat Penandatangan Dokumen & Kop Surat Resmi
-    - 13.1 Master Data 70 Pegawai Inspektorat (PNS & PPPK)
-    - 13.2 Tambah Pegawai Baru (Create)
-    - 13.3 Pembaruan Data Pegawai (Update)
-    - 13.4 Proteksi Hapus Pegawai & Integritas Aset (Delete)
-    - 13.5 Ekspor Data Pegawai ke Spreadsheet Excel/CSV
+17. [Bab 15: Sistem Ambil ATK Mandiri (Self-Checkout Kiosk & QR Code)](#bab-15-sistem-ambil-atk-mandiri-self-checkout-kiosk--qr-code)
+    - 15.1 Tiga Metode Akses Terpadu (Kombinasi Opsi 1, 2, dan 3)
+    - 15.2 Alur Transaksi Checkout Mandiri 4 Langkah Cepat (< 5 Detik)
+    - 15.3 Cetak Poster QR Code Resmi A4 untuk Ruangan ATK
+18. [Kesimpulan & Dukungan Teknis](#kesimpulan--dukungan-teknis)
 
 ---
 

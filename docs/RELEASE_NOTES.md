@@ -58,17 +58,23 @@ Versi **2.5.0 Enterprise** merupakan rilis besar (*major release*) yang menghadi
 - Konsistensi 100% pada seluruh modul: Stok Opname ATK, Helpdesk, Jejak Audit, Pengaturan Akun, Manajemen Pegawai, dan Pusat Data Master.
 - Standar aksesibilitas WCAG AA tanpa teks gelap di atas latar belakang hitam.
 - Antarmuka responsif ramah layar ponsel cerdas, tablet, dan monitor desktop.
-- Modal interaktif **"Catatan Rilis & Fitur Terupdate"** yang dapat diakses langsung dari Header dan Sidebar footer.
+
+#### 6. 🛒 KIOS AMBIL ATK MANDIRI (SELF-CHECKOUT KIOSK & QR CODE)
+- **Kombinasi 3 Metode Akses Terpadu (Opsi 1, 2, dan 3)**:
+  - **Opsi 1 (QR Code Mobile)**: Scan poster QR di pintu/rak ATK lewat HP pegawai; fitur *Smart Remember* mengingat nama ASN di memori HP.
+  - **Opsi 2 (Mode Kios Tablet Meja)**: Tampilan layar sentuh responsif dengan **Auto-Reset Countdown 5 Detik** kembali ke mode standby setelah transaksi.
+  - **Opsi 3 (Direct Shortcut)**: Tombol oranye **"Ambil ATK"** di Header atas, menu Sidebar, dan banner interaktif Stock Opname.
+- **Transaksi Super Cepat (< 5 Detik)**: Katalog visual 18 item ATK, 1-tap preset keperluan dinas, dan pemotongan stok otomatis terhubung ke riwayat mutasi dan audit trail forensik APIP.
+- **Template Cetak Poster QR Resmi A4**: Lengkap dengan Kop Kedinasan Pemerintah Kabupaten Trenggalek - Inspektorat Daerah.
 
 ---
 
-### PETUNJUK PEMBARUAN DI SERVER PRODUKSI (VPS VIRTUALMIN):
-
-Untuk menerapkan seluruh pembaruan versi 2.5.0 pada server VPS:
-```bash
-cd /home/inspektorat/domains/simtik.inspektorat.trenggalekkab.go.id/simtik
-bash deploy-virtualmin.sh
-```
+### CARA MEMVERIFIKASI & MENGGUNAKAN VERSI INI
+1. Pastikan server lokal atau server VPS menjalankan versi kode terbaru (`git pull origin main`).
+2. Jalankan perintah build: `npm run build`.
+3. Buka peramban (browser) dan perhatikan label **`v2.5 Enterprise`** di bilah Header serta kartu versi di Sidebar.
+4. Klik pada label versi tersebut untuk melihat modal detail interaktif rilis resmi ini kapan saja.
+5. Jalankan `bash deploy-virtualmin.sh` pada server VPS untuk deployment otomatis lengkap dengan backend service PM2 (`simtik-api`).
 
 ---
 *Dikembangkan untuk Inspektorat Daerah Kabupaten Trenggalek.*
