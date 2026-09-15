@@ -98,7 +98,8 @@ export default function Devices({ title = "Perangkat TIK" }) {
             </head>
             <body onload="window.print();">
                 <div class="header">
-                    <h2>DINAS KOMUNIKASI DAN INFORMATIKA</h2>
+                    <h2>PEMERINTAH KABUPATEN TRENGGALEK</h2>
+                    <h2>INSPEKTORAT DAERAH</h2>
                     <h3>${reportTitle}</h3>
                 </div>
                 <table>

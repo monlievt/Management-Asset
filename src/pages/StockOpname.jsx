@@ -3,7 +3,7 @@ import {
     Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye,
     ArrowDown, ArrowUp, History, Printer, ShoppingCart, QrCode, Monitor
 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { EMPLOYEE_LIST } from "../data/employees"
@@ -39,14 +39,14 @@ const ItemCombobox = ({ value, onChange, options, onSelect }) => {
                         setIsOpen(true)
                     }}
                     onFocus={() => setIsOpen(true)}
-                    placeholder="Select or type new item name..."
+                    placeholder="Pilih atau ketik nama barang persediaan..."
                     className="w-full pr-10"
                     autoComplete="off"
                 />
                 <div className="absolute right-3 flex items-center space-x-1">
                     {search && filteredOptions.length === 0 ? (
                         <span className="text-xs text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                            NEW
+                            BARU
                         </span>
                     ) : (
                         <button
@@ -163,10 +163,8 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-
-
             <div className="relative z-20 space-y-2">
-                <label className="text-sm font-medium">Item Name</label>
+                <label className="text-sm font-medium">Nama Barang</label>
                 <ItemCombobox
                     value={formData.name}
                     onChange={handleNameChange}
@@ -177,28 +175,28 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Brand/Merk</label>
-                    <Input name="brand" value={formData.brand} onChange={handleChange} disabled={isOutgoing} className={isOutgoing ? "bg-gray-100" : ""} />
+                    <label className="text-sm font-medium">Merek / Produsen</label>
+                    <Input name="brand" value={formData.brand} onChange={handleChange} disabled={isOutgoing} className={isOutgoing ? "bg-gray-100 dark:bg-secondary-800" : ""} placeholder="contoh: PaperOne, Pilot..." />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Category</label>
-                    <Input name="category" value={formData.category} onChange={handleChange} disabled={isOutgoing} className={isOutgoing ? "bg-gray-100" : ""} />
+                    <label className="text-sm font-medium">Kategori ATK</label>
+                    <Input name="category" value={formData.category} onChange={handleChange} disabled={isOutgoing} className={isOutgoing ? "bg-gray-100 dark:bg-secondary-800" : ""} placeholder="contoh: Kertas, Alat Tulis..." />
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">{isOutgoing ? "Quantity Out" : "Quantity In"}</label>
+                    <label className="text-sm font-medium">{isOutgoing ? "Jumlah Barang Keluar" : "Jumlah Barang Masuk"}</label>
                     <Input name="quantity" type="number" min="1" value={formData.quantity} onChange={handleChange} required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Unit (Satuan)</label>
+                    <label className="text-sm font-medium">Satuan Barang</label>
                     <select
                         name="unit"
                         value={formData.unit}
                         onChange={handleChange}
                         disabled={isOutgoing}
-                        className={`flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-secondary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${isOutgoing ? "bg-gray-100" : ""}`}
+                        className={`flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-secondary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white ${isOutgoing ? "bg-gray-100 dark:bg-secondary-800" : ""}`}
                     >
                         <option value="Pcs">Pcs</option>
                         <option value="Box">Box</option>
@@ -206,6 +204,7 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
                         <option value="Pack">Pack</option>
                         <option value="Unit">Unit</option>
                         <option value="Botol">Botol</option>
+                        <option value="Set">Set</option>
                     </select>
                 </div>
             </div>
@@ -213,13 +212,13 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
             {isOutgoing && (
                 <>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Taker</label>
+                        <label className="text-sm font-medium">Nama Pengambil / Pemakai</label>
                         <Input
                             list="taker-list"
                             name="taker"
                             value={formData.taker}
                             onChange={handleChange}
-                            placeholder="Select or type taker name..."
+                            placeholder="Pilih atau ketik nama ASN pengambil..."
                             required
                         />
                         <datalist id="taker-list">
@@ -229,16 +228,16 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
                         </datalist>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Keterangan</label>
-                        <Input name="notes" value={formData.notes} onChange={handleChange} placeholder="Keperluan..." />
+                        <label className="text-sm font-medium">Keperluan / Keterangan</label>
+                        <Input name="notes" value={formData.notes} onChange={handleChange} placeholder="contoh: Tugas Pengawasan, Audit Lapangan, Penyusunan LHP..." />
                     </div>
                 </>
             )}
 
             <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-                <Button type="submit" variant={isOutgoing ? "destructive" : "default"}>
-                    {isOutgoing ? "Confirm Out" : "Save Item"}
+                <Button type="button" variant="outline" onClick={onCancel}>Batal</Button>
+                <Button type="submit" variant={isOutgoing ? "danger" : "primary"}>
+                    {isOutgoing ? "Konfirmasi Barang Keluar" : "Simpan Barang Masuk"}
                 </Button>
             </div>
         </form>
@@ -252,6 +251,7 @@ const initialStock = [
 ]
 
 export default function StockOpname() {
+    const navigate = useNavigate()
     const [stocks, setStocks] = useState(() => getAtkStocks())
     const [history, setHistory] = useState(() => getAtkHistory())
 
@@ -302,7 +302,7 @@ export default function StockOpname() {
             }
 
             if (updatedItem.quantity < 0) {
-                alert("Error: Stock cannot be negative!")
+                alert("Kesalahan: Jumlah stok tidak boleh bernilai negatif!")
                 return
             }
 
@@ -321,7 +321,7 @@ export default function StockOpname() {
                 if (type === 'outgoing') {
                     updatedQuantity = parseInt(existingItem.quantity) - parseInt(data.quantity);
                     if (updatedQuantity < 0) {
-                        alert("Error: Stock insufficiency! Cannot take out more than available.");
+                        alert("Kesalahan: Stok persediaan tidak mencukupi! Jumlah yang diambil melebihi stok yang ada di gudang.");
                         return;
                     }
                 } else {
@@ -336,7 +336,7 @@ export default function StockOpname() {
                 setStocks(stocks.map(s => s.id === existingItem.id ? updatedItem : s))
             } else {
                 if (type === 'outgoing') {
-                    alert("Error: Item not found! Cannot take out an item that does not exist.");
+                    alert("Kesalahan: Barang tidak ditemukan! Tidak dapat mencatat pengeluaran untuk barang yang belum terdaftar di master persediaan.");
                     return;
                 }
                 // Completely New Item
@@ -359,8 +359,8 @@ export default function StockOpname() {
             quantity: data.quantity,
             unit: data.unit,
             taker: type === 'outgoing' ? data.taker : '-',
-            notes: type === 'outgoing' ? data.notes : (selectedItem ? 'Stock Update' : 'New Stock'),
-            user: "Admin" // Placeholder for logged in user
+            notes: type === 'outgoing' ? data.notes : (selectedItem ? 'Pembaruan Stok' : 'Pemasukan Stok Baru'),
+            user: "Admin"
         }
         setHistory([newRecord, ...history])
 
@@ -369,14 +369,14 @@ export default function StockOpname() {
     }
 
     const handleDelete = (id) => {
-        if (window.confirm("Are you sure?")) {
+        if (window.confirm("Apakah Anda yakin ingin menghapus barang ini dari daftar persediaan ATK?")) {
             setStocks(stocks.filter(s => s.id !== id))
         }
     }
 
     const printStockReport = () => {
         const now = new Date()
-        const reportTitle = `Laporan Stok Opname ATK - ${now.toLocaleString('default', { month: 'long', year: 'numeric' })}`
+        const reportTitle = `Laporan Stok Opname ATK - ${now.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}`
 
         const printWindow = window.open('', '', 'width=800,height=600')
         printWindow.document.write(`
@@ -410,8 +410,8 @@ export default function StockOpname() {
             <body>
                 <div class="header-container">
                     <div class="header-title-1">PEMERINTAH KABUPATEN TRENGGALEK</div>
-                    <div class="header-title-2">INSPEKTORAT</div>
-                    <div class="header-address">Jl. KH. Wachid Hasyim No.5 66311 Telp. 0355-791472</div>
+                    <div class="header-title-2">INSPEKTORAT DAERAH</div>
+                    <div class="header-address">Jl. KH. Wachid Hasyim No.5 Trenggalek 66311 Telp. 0355-791472</div>
                     <div class="header-address">https://inspektorat.trenggalekkab.go.id</div>
                 </div>
 
@@ -420,11 +420,11 @@ export default function StockOpname() {
                     <thead>
                         <tr>
                             <th style="width: 5%">No</th>
-                            <th style="width: 35%">Item Name</th>
-                            <th style="width: 20%">Brand</th>
-                            <th style="width: 15%">Quantity</th>
-                            <th style="width: 15%">Unit</th>
-                            <th style="width: 10%">Status</th>
+                            <th style="width: 35%">Nama Barang</th>
+                            <th style="width: 20%">Merek / Brand</th>
+                            <th style="width: 15%">Jumlah Stok</th>
+                            <th style="width: 15%">Satuan</th>
+                            <th style="width: 10%">Status Stok</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -436,7 +436,7 @@ export default function StockOpname() {
                                 <td style="text-align: center;">${item.quantity}</td>
                                 <td style="text-align: center;">${item.unit}</td>
                                 <td style="text-align: center;" class="${item.quantity > 5 ? 'status-available' : 'status-limited'}">
-                                    ${item.quantity > 5 ? 'Available' : 'Limited'}
+                                    ${item.quantity > 5 ? 'Tersedia' : 'Menipis'}
                                 </td>
                             </tr>
                         `).join('')}
@@ -444,7 +444,7 @@ export default function StockOpname() {
                 </table>
                 <div class="footer">
                     <p>Trenggalek, ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    <p>Dicetak oleh Admin</p>
+                    <p>Pengurus Barang Pengguna</p>
                 </div>
                 <script>
                     window.onload = function() { window.print(); window.close(); }
@@ -479,29 +479,34 @@ export default function StockOpname() {
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Link to="/atk/ambil">
-                        <Button variant="outline" className="text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 font-bold">
-                            <ShoppingCart className="mr-2 h-4 w-4 text-emerald-600" /> Kios Ambil Mandiri
-                        </Button>
-                    </Link>
-                    <Link to="/atk/poster-qr">
-                        <Button variant="outline" className="text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800">
-                            <QrCode className="mr-2 h-4 w-4 text-primary-600" /> Poster QR Ruangan
-                        </Button>
-                    </Link>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate("/assets/atk/checkout")}
+                        className="text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 font-bold"
+                    >
+                        <ShoppingCart className="mr-2 h-4 w-4 text-emerald-600" /> Kios Ambil Mandiri
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate("/assets/atk/poster-qr")}
+                        className="text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800"
+                    >
+                        <QrCode className="mr-2 h-4 w-4 text-primary-600" /> Poster QR Ruangan
+                    </Button>
                     <Button variant="outline" onClick={printStockReport}>
                         <Printer className="mr-2 h-4 w-4" /> Cetak Laporan
                     </Button>
-                    <Link to="/assets/atk/history">
-                        <Button variant="outline">
-                            <History className="mr-2 h-4 w-4" /> Riwayat Mutasi
-                        </Button>
-                    </Link>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate("/assets/atk/history")}
+                    >
+                        <History className="mr-2 h-4 w-4" /> Riwayat Mutasi
+                    </Button>
                     <Button variant="danger" onClick={() => handleOpenModal('outgoing')}>
-                        <ArrowUp className="mr-2 h-4 w-4" /> Barang Keluar
+                        <ArrowUp className="mr-2 h-4 w-4" /> Catat Barang Keluar
                     </Button>
                     <Button variant="primary" onClick={() => handleOpenModal('incoming')}>
-                        <Plus className="mr-2 h-4 w-4" /> Barang Masuk
+                        <Plus className="mr-2 h-4 w-4" /> Catat Barang Masuk
                     </Button>
                 </div>
             </div>
@@ -525,18 +530,23 @@ export default function StockOpname() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                    <Link to="/atk/poster-qr">
-                        <Button size="sm" variant="outline" className="text-xs">
-                            <Printer className="h-3.5 w-3.5 mr-1.5" />
-                            Cetak Poster QR
-                        </Button>
-                    </Link>
-                    <Link to="/atk/ambil?mode=kiosk">
-                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
-                            <Monitor className="h-3.5 w-3.5 mr-1.5" />
-                            Buka Kios Tablet
-                        </Button>
-                    </Link>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => navigate("/assets/atk/poster-qr")}
+                        className="text-xs"
+                    >
+                        <Printer className="h-3.5 w-3.5 mr-1.5" />
+                        Cetak Poster QR
+                    </Button>
+                    <Button
+                        size="sm"
+                        onClick={() => navigate("/atk/ambil?mode=kiosk")}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
+                    >
+                        <Monitor className="h-3.5 w-3.5 mr-1.5" />
+                        Buka Kios Tablet
+                    </Button>
                 </div>
             </div>
 
@@ -604,7 +614,7 @@ export default function StockOpname() {
                     setIsModalOpen(false)
                     setSelectedItem(null)
                 }}
-                title={modalType === 'outgoing' ? "Barang Keluar (Outgoing)" : (selectedItem ? "Edit Barang Masuk" : "Barang Masuk (New Item)")}
+                title={modalType === 'outgoing' ? "Catat Pengeluaran Barang (ATK Keluar)" : (selectedItem ? "Ubah Data Barang Masuk" : "Catat Pemasukan Barang (ATK Masuk)")}
             >
                 <StockForm
                     initialData={selectedItem}

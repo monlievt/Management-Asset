@@ -106,48 +106,48 @@ export function DeviceForm({ initialData, onSubmit, onCancel }) {
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Device Name <span className="text-red-500">*</span></label>
-                    <Input name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Laptop Dell" required />
+                    <label className="text-sm font-medium">Nama Perangkat <span className="text-red-500">*</span></label>
+                    <Input name="name" value={formData.name} onChange={handleChange} placeholder="contoh: Laptop Dell Latitude 5420" required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Category <span className="text-red-500">*</span></label>
-                    <Input name="category" value={formData.category} onChange={handleChange} placeholder="e.g. Laptop" required />
+                    <label className="text-sm font-medium">Kategori <span className="text-red-500">*</span></label>
+                    <Input name="category" value={formData.category} onChange={handleChange} placeholder="contoh: Laptop, PC, Server, Printer" required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Brand <span className="text-red-500">*</span></label>
-                    <Input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Dell" required />
+                    <label className="text-sm font-medium">Merek / Brand <span className="text-red-500">*</span></label>
+                    <Input name="brand" value={formData.brand} onChange={handleChange} placeholder="contoh: Dell, Lenovo, HP, Asus" required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Serial Number <span className="text-red-500">*</span></label>
-                    <Input name="serial" value={formData.serial} onChange={handleChange} placeholder="e.g. DL12345" required />
+                    <label className="text-sm font-medium">Nomor Seri / Serial Number <span className="text-red-500">*</span></label>
+                    <Input name="serial" value={formData.serial} onChange={handleChange} placeholder="contoh: DL-5420-SN12345" required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Purchase Date <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Tanggal Pengadaan <span className="text-red-500">*</span></label>
                     <Input type="date" name="purchaseDate" value={formData.purchaseDate} onChange={handleChange} required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Status Perangkat <span className="text-red-500">*</span></label>
                     <select
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
                         required
-                        className="flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                        className="flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white"
                     >
-                        <option value="Available">Available</option>
-                        <option value="In Use">In Use</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Retired">Retired</option>
+                        <option value="Available">Tersedia di Gudang (Available)</option>
+                        <option value="In Use">Sedang Digunakan (In Use)</option>
+                        <option value="Maintenance">Dalam Perbaikan (Maintenance)</option>
+                        <option value="Retired">Afkir / Dihapus (Retired)</option>
                     </select>
                 </div>
                 <div className="col-span-2 space-y-2">
-                    <label className="text-sm font-medium">Assignee <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Pegawai Penanggung Jawab <span className="text-red-500">*</span></label>
                     <Input
                         list="employee-list"
                         name="assignee"
                         value={formData.assignee}
                         onChange={handleChange}
-                        placeholder="Select or type name..."
+                        placeholder="Pilih atau ketik nama ASN penanggung jawab..."
                         required
                     />
                     <datalist id="employee-list">
@@ -158,8 +158,8 @@ export function DeviceForm({ initialData, onSubmit, onCancel }) {
                 </div>
             </div>
             <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-                <Button type="submit">Save Device</Button>
+                <Button type="button" variant="outline" onClick={onCancel}>Batal</Button>
+                <Button type="submit">Simpan Perangkat</Button>
             </div>
         </form>
     )

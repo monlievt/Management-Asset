@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react"
 import { ArrowLeft, Trash2, Printer } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table"
 import { Badge } from "../components/ui/Badge"
 
 export default function StockHistory() {
+    const navigate = useNavigate()
     const [history, setHistory] = useState(() => {
         const saved = localStorage.getItem("simtik_stock_atk_history")
         return saved ? JSON.parse(saved) : []
@@ -45,7 +46,7 @@ export default function StockHistory() {
 
     const handleDeleteSelected = () => {
         if (selectedIds.length === 0) return
-        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} records? This will REVERSE the stock changes!`)) return
+        if (!window.confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.length} catatan riwayat mutasi? Tindakan ini akan MENGEMBALIKAN (merollback) kembali jumlah stok barang terkait!`)) return
 
         // Process deletions and stock updates
         let updatedStocks = [...stocks]
@@ -102,13 +103,13 @@ export default function StockHistory() {
         })
 
         if (filteredHistory.length === 0) {
-            alert(`No records found for this ${period === 'monthly' ? 'month' : 'year'}.`)
+            alert(`Tidak ditemukan catatan riwayat mutasi untuk periode ${period === 'monthly' ? 'bulan' : 'tahun'} ini.`)
             return
         }
 
         const reportTitle = period === 'monthly'
-            ? `Laporan Bulanan Stock Opname ATK - ${now.toLocaleString('default', { month: 'long', year: 'numeric' })}`
-            : `Laporan Tahunan Stock Opname ATK - ${currentYear}`
+            ? `Laporan Mutasi Keluar-Masuk ATK - ${now.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}`
+            : `Laporan Mutasi Keluar-Masuk ATK - Tahun ${currentYear}`
 
         const printWindow = window.open('', '', 'width=800,height=600')
         printWindow.document.write(`
@@ -140,8 +141,8 @@ export default function StockHistory() {
             <body>
                 <div class="header-container">
                     <div class="header-title-1">PEMERINTAH KABUPATEN TRENGGALEK</div>
-                    <div class="header-title-2">INSPEKTORAT</div>
-                    <div class="header-address">Jl. KH. Wachid Hasyim No.5 66311 Telp. 0355-791472</div>
+                    <div class="header-title-2">INSPEKTORAT DAERAH</div>
+                    <div class="header-address">Jl. KH. Wachid Hasyim No.5 Trenggalek 66311 Telp. 0355-791472</div>
                     <div class="header-address">https://inspektorat.trenggalekkab.go.id</div>
                 </div>
 
@@ -149,12 +150,12 @@ export default function StockHistory() {
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 15%">Date/Time</th>
-                            <th style="width: 10%">Type</th>
-                            <th style="width: 30%">Item Name</th>
-                            <th style="width: 15%">Qty</th>
-                            <th style="width: 15%">Taker</th>
-                            <th style="width: 15%">Notes</th>
+                            <th style="width: 18%">Tanggal & Waktu</th>
+                            <th style="width: 12%">Jenis Mutasi</th>
+                            <th style="width: 25%">Nama Barang</th>
+                            <th style="width: 15%">Jumlah</th>
+                            <th style="width: 15%">Penerima / Pengambil</th>
+                            <th style="width: 15%">Keperluan / Catatan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,7 +173,7 @@ export default function StockHistory() {
                 </table>
                 <div class="footer">
                     <p>Trenggalek, ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    <p>Dicetak oleh Admin</p>
+                    <p>Pengurus Barang Pengguna</p>
                 </div>
                 <script>
                     window.onload = function() { window.print(); window.close(); }
@@ -185,17 +186,26 @@ export default function StockHistory() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                    <Link to="/assets/atk">
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">Riwayat Mutasi ATK</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center space-x-3">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate("/assets/atk")}
+                        title="Kembali ke Stok Opname ATK"
+                        className="hover:bg-secondary-100 dark:hover:bg-secondary-800"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <div>
+                        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">Riwayat Mutasi ATK</h2>
+                        <p className="text-xs text-secondary-500 dark:text-secondary-400 mt-0.5">
+                            Log pencatatan mutasi barang persediaan masuk dan barang keluar secara kronologis.
+                        </p>
+                    </div>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <Button variant="outline" onClick={() => printReport('monthly')}>
                         <Printer className="mr-2 h-4 w-4" />
                         Laporan Bulanan
@@ -205,9 +215,9 @@ export default function StockHistory() {
                         Laporan Tahunan
                     </Button>
                     {selectedIds.length > 0 && (
-                        <Button variant="destructive" onClick={handleDeleteSelected}>
+                        <Button variant="danger" onClick={handleDeleteSelected}>
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete ({selectedIds.length})
+                            Hapus Terpilih ({selectedIds.length})
                         </Button>
                     )}
                 </div>
@@ -215,7 +225,7 @@ export default function StockHistory() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg font-medium">Log Keluar Masuk Barang</CardTitle>
+                    <CardTitle className="text-base font-semibold">Log Keluar Masuk Persediaan ATK</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -229,11 +239,11 @@ export default function StockHistory() {
                                         className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                     />
                                 </TableHead>
-                                <TableHead>Date/Time</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Item Name</TableHead>
-                                <TableHead>Qty</TableHead>
-                                <TableHead>Taker / Notes</TableHead>
+                                <TableHead>Tanggal & Waktu</TableHead>
+                                <TableHead>Jenis Mutasi</TableHead>
+                                <TableHead>Nama Barang</TableHead>
+                                <TableHead>Jumlah</TableHead>
+                                <TableHead>Penerima / Catatan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -248,26 +258,26 @@ export default function StockHistory() {
                                                 className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                             />
                                         </TableCell>
-                                        <TableCell className="text-xs text-gray-500">{log.date}</TableCell>
+                                        <TableCell className="text-xs text-secondary-500 font-mono">{log.date}</TableCell>
                                         <TableCell>
-                                            <Badge variant={log.type === 'IN' ? 'success' : 'destructive'} className="text-[10px] px-1.5 py-0">
+                                            <Badge variant={log.type === 'IN' ? 'success' : 'danger'} className="text-[10px] px-1.5 py-0 font-bold">
                                                 {log.type === 'IN' ? 'MASUK' : 'KELUAR'}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="font-medium">{log.itemName}</TableCell>
-                                        <TableCell>{log.quantity} {log.unit}</TableCell>
+                                        <TableCell className="font-semibold text-secondary-900 dark:text-white">{log.itemName}</TableCell>
+                                        <TableCell className="font-mono font-bold">{log.quantity} {log.unit}</TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                {log.taker !== '-' && <span className="font-medium text-xs">{log.taker}</span>}
-                                                <span className="text-xs text-gray-500 italic">{log.notes}</span>
+                                                {log.taker !== '-' && <span className="font-medium text-xs text-secondary-900 dark:text-white">{log.taker}</span>}
+                                                <span className="text-xs text-secondary-500 dark:text-secondary-400 italic">{log.notes}</span>
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center text-gray-500 py-4">
-                                        No recent activity.
+                                    <TableCell colSpan={6} className="text-center text-secondary-500 dark:text-secondary-400 py-8">
+                                        Belum ada riwayat aktivitas mutasi persediaan ATK yang tercatat.
                                     </TableCell>
                                 </TableRow>
                             )}

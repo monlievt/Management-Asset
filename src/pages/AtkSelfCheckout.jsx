@@ -320,17 +320,16 @@ export default function AtkSelfCheckout() {
 
                     {/* Aksi Tambahan: Toggle Kios & Cetak QR */}
                     <div className="flex items-center gap-2">
-                        <Link to="/atk/poster-qr">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-xs flex items-center gap-1.5"
-                                title="Cetak lembar poster QR Code untuk ditempel di pintu/rak ruang ATK"
-                            >
-                                <QrCode className="h-4 w-4 text-primary-600" />
-                                <span className="hidden sm:inline">Cetak Poster QR Ruangan</span>
-                            </Button>
-                        </Link>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate("/atk/poster-qr")}
+                            className="text-xs flex items-center gap-1.5"
+                            title="Cetak lembar poster QR Code untuk ditempel di pintu/rak ruang ATK"
+                        >
+                            <QrCode className="h-4 w-4 text-primary-600" />
+                            <span className="hidden sm:inline">Cetak Poster QR Ruangan</span>
+                        </Button>
 
                         <Button
                             variant={isKioskMode ? "default" : "outline"}

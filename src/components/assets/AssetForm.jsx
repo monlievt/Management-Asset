@@ -288,8 +288,8 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
                 </div>
             </div>
             <div className="flex justify-end space-x-2 pt-2">
-                <Button type="button" variant="outline" onClick={onCancel} size="sm">Cancel</Button>
-                <Button type="submit" size="sm">Save Asset</Button>
+                <Button type="button" variant="outline" onClick={onCancel} size="sm">Batal</Button>
+                <Button type="submit" size="sm">Simpan Aset</Button>
             </div>
         </form>
     )

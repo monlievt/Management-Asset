@@ -191,9 +191,9 @@ export default function Assets({ title = "Inventaris Aset" }) {
             </head>
             <body onload="window.print();">
                 <div class="header-container">
-                    <div class="header-title-1">Pemerintah Republik Indonesia</div>
-                    <div class="header-title-2">Dinas Komunikasi, Informatika, Statistik & Persandian</div>
-                    <div class="header-address">Sistem Informasi Manajemen Logistik & Inventaris TIK (SIM-TIK)</div>
+                    <div class="header-title-1">Pemerintah Kabupaten Trenggalek</div>
+                    <div class="header-title-2">Inspektorat Daerah</div>
+                    <div class="header-address">Jl. KH. Wachid Hasyim No.5 Trenggalek 66311 Telp. 0355-791472 | SIM-TIK Inspektorat</div>
                 </div>
 
                 <h1>${reportTitle}</h1>

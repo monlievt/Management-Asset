@@ -95,7 +95,7 @@ export default function KirPrintView() {
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-xs mb-4 bg-gray-50 p-3 rounded border border-gray-300">
                     <div className="flex">
                         <span className="w-36 font-semibold">Satuan Kerja (SKPD)</span>
-                        <span>: Dinas Komunikasi dan Informatika</span>
+                        <span>: {signers?.agencyName || "Inspektorat Daerah Kabupaten Trenggalek"}</span>
                     </div>
                     <div className="flex">
                         <span className="w-36 font-semibold">Nama Ruangan</span>
