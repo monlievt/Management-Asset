@@ -7,11 +7,11 @@
 ## DAFTAR ISI
 1. [Pendahuluan](#1-pendahuluan)
 2. [Hierarki Hak Akses & Peran Pengguna (RBAC)](#2-hierarki-hak-akses--peran-pengguna-rbac)
-3. [Bab 1: Otentikasi & Antarmuka Sistem](#bab-1-otentikasi--antarmuka-sistem)
+3. [Bab 1: Otentikasi & Antarmuka Sistem (UI/UX)](#bab-1-otentikasi--antarmuka-sistem)
    - 1.1 Masuk ke Sistem (Login)
    - 1.2 Lupa Kata Sandi (Forgot Password)
-   - 1.3 Pengaturan Profil Pengguna
-   - 1.4 Mode Gelap & Terang (Light/Dark Mode)
+   - 1.3 Pengaturan Profil Pengguna & Kata Sandi
+   - 1.4 Mode Gelap Konsisten (*High-Contrast Dark Mode*)
    - 1.5 Tampilan Responsif (Mobile & Tablet)
 4. [Bab 2: Dasbor Utama (Executive Dashboard)](#bab-2-dasbor-utama-executive-dashboard)
    - 2.1 Kartu Statistik Ketersediaan Barang
@@ -38,10 +38,25 @@
 9. [Bab 7: Modul Perangkat TIK & Stiker Label QR Code](#bab-7-modul-perangkat-tik--stiker-label-qr-code)
    - 7.1 Manajemen Perangkat Keras TIK
    - 7.2 Generator & Cetak Stiker Label QR Code Fisik
-10. [Bab 8: Modul Stok Opname ATK & Layanan Helpdesk](#bab-8-modul-stok-opname-atk--layanan-helpdesk)
-    - 8.1 Manajemen Stok Barang Habis Pakai (ATK)
-    - 8.2 Layanan Tiket Gangguan & Helpdesk
-11. [Bab 9: Pelaporan & Ekspor Data (CSV / Excel)](#bab-9-pelaporan--ekspor-data-csv--excel)
+10. [Bab 8: Modul Stok Opname ATK & Logistik Habis Pakai](#bab-8-modul-stok-opname-atk--logistik-habis-pakai)
+    - 8.1 Manajemen Stok Logistik ATK
+    - 8.2 Transaksi Barang Masuk & Barang Keluar
+    - 8.3 Cetak Lembar Stok & Riwayat Mutasi
+11. [Bab 9: Modul Layanan Helpdesk & Tiket Aduan TIK](#bab-9-modul-layanan-helpdesk--tiket-aduan-tik)
+    - 9.1 Alur Pembuatan Tiket Aduan Baru
+    - 9.2 Penanganan & Pembaruan Status Gangguan
+    - 9.3 Cetak Laporan Rekapitulasi Tiket Bulanan & Tahunan
+12. [Bab 10: Modul Jejak Audit Forensik APIP (Audit Trail)](#bab-10-modul-jejak-audit-forensik-apip-audit-trail)
+    - 10.1 Pencatatan Otomatis (*Immutable Audit Log*)
+    - 10.2 Standar Kepatuhan Inspektorat & Auditor BPK
+    - 10.3 Pencarian Cepat & Inspeksi Detail Perubahan JSON
+13. [Bab 11: Arsitektur Fullstack, SQLite WAL & Anggaran APBD](#bab-11-arsitektur-fullstack-sqlite-wal--anggaran-apbd)
+    - 11.1 Integrasi Server Backend Node.js & Database SQLite WAL
+    - 11.2 Master Data 70 Pegawai Inspektorat Trenggalek
+    - 11.3 Pengelolaan Aset Berbasis APBD (±Rp 10 Miliar)
+14. [Bab 12: Pelaporan, Ekspor Data & Pemeliharaan Server](#bab-12-pelaporan-ekspor-data--pemeliharaan-server)
+    - 12.1 Ekspor Spreadsheet Excel / CSV (UTF-8 BOM)
+    - 12.2 Prosedur Pembaruan & Deployment di Virtualmin/Webmin
 
 ---
 
@@ -86,14 +101,18 @@ Aplikasi menerapkan sistem kendali akses berbasis peran (*Role-Based Access Cont
 2. Masukkan alamat email kedinasan yang terdaftar.
 3. Sistem akan mengirimkan instruksi pemulihan atau memandu pengguna menghubungi Administrator Pengelola Barang.
 
-### 1.3 Pengaturan Profil Pengguna
-1. Klik avatar profil di sudut kanan atas Header $\rightarrow$ pilih **"Pengaturan Profil"** (atau menu **Pengaturan Sistem** di Sidebar).
-2. Anda dapat memperbarui Nama Lengkap, Email, Nomor Telepon/WhatsApp, serta mengubah Kata Sandi secara aman.
+### 1.3 Pengaturan Profil Pengguna & Kata Sandi (`/settings`)
+1. Akses melalui avatar profil di sudut kanan atas Header $\rightarrow$ pilih **"Pengaturan Profil"** (atau menu **Pengaturan Sistem** di Sidebar).
+2. Terdiri dari dua tab navigasi mandiri:
+   - **Tab Profil Pengguna**: Memperbarui Nama Tampilan, Alamat Email Kedinasan, serta foto/inisial avatar.
+   - **Tab Keamanan & Kata Sandi**: Mengubah kata sandi akun dengan verifikasi kata sandi saat ini dan konfirmasi sandi baru.
+3. Seluruh elemen kartu dan isian formulir telah dioptimalkan dengan antarmuka yang nyaman di mata pada tema terang maupun tema gelap.
 
-### 1.4 Mode Gelap & Terang (Light/Dark Mode)
+### 1.4 Mode Gelap Konsisten (*High-Contrast Dark Mode*)
 1. Klik ikon **Matahari / Bulan** di bagian kanan atas Header.
-2. Seluruh tema warna antarmuka akan beralih seketika antara tema terang (*Clean Enterprise Slate*) dan tema gelap (*High Contrast Dark Slate*).
-3. Pilihan tema disimpan otomatis di penyimpanan lokal (*localStorage*) dan akan tetap aktif saat pengguna membuka aplikasi kembali.
+2. Seluruh modul aplikasi (Dasbor, Daftar Inventaris, Stok Opname ATK, Jejak Audit Forensik, Layanan Helpdesk, dan Pengaturan Akun) beralih secara instan dan menyeluruh tanpa adanya tabrakan kartu putih (*white card mismatch*).
+3. Menggunakan palet enterprise *Slate Dark* (`#0f172a` / `#020617`) dengan kontras teks tajam yang meminimalkan kelelahan mata (*eye-strain*) saat petugas bekerja di malam hari.
+4. Status tema tersimpan secara persisten di penyimpanan peramban (*localStorage*) sehingga tidak akan berubah saat browser di-refresh.
 
 ### 1.5 Tampilan Responsif (Mobile & Tablet)
 - Pada perangkat ponsel cerdas atau tablet:
@@ -284,38 +303,133 @@ Halaman khusus yang memfilter aset kategori perangkat keras komputer dinas (Lapt
 
 ---
 
-## BAB 8: MODUL STOK OPNAME ATK & LAYANAN HELPDESK
+## BAB 8: MODUL STOK OPNAME ATK & LOGISTIK HABIS PAKAI
 
-### 8.1 Manajemen Stok Barang Habis Pakai (ATK) (`/assets/atk`)
-- Mencatat barang habis pakai (kertas HVS, toner printer, flashdisk, tinta, map, pulpen).
-- Transaksi Masuk (Penerimaan dari Pengadaan) dan Transaksi Keluar (Permintaan Barang per Bidang/Seksi).
-- Riwayat pergerakan stok tersimpan lengkap di menu **Riwayat Stok**.
-- Indikator otomatis stok menipis (*Low Stock Warning*) jika kuantitas barang berada di bawah ambang batas aman ($\le 5$).
+### 8.1 Manajemen Stok Logistik ATK (`/assets/atk`)
+- Modul ini mengelola siklus logistik barang habis pakai kedinasan (Kertas HVS A4, tinta printer, pita ribbon, map dokumen, pulpen, flashdisk, dan alat tulis kantor lainnya).
+- **Indikator Stok**: Menampilkan nama barang, merek/distributor, kuantitas saat ini, satuan kemasan (*Rim, Kotak, Botol, Pcs*), tanggal pembaruan terakhir, dan status ketersediaan (*Tersedia / Habis*).
+- **Tampilan Dark Mode Modern**: Tabel stok opname telah terintegrasi dengan tema gelap berlatar slate yang teduh dan teks berlabel Bahasa Indonesia baku.
 
-### 8.2 Layanan Tiket Gangguan & Helpdesk (`/helpdesk`)
-- Pencatatan laporan kendala teknis dari pegawai dinas (Printer macet, laptop terkena virus, jaringan internet putus).
-- Klasifikasi tingkat urgensi (*Tinggi, Sedang, Rendah*).
-- Penugasan teknisi penanggung jawab perbaikan.
-- Tombol cetak Berita Acara Rekapitulasi Tiket Bulanan/Tahunan.
+### 8.2 Transaksi Barang Masuk & Barang Keluar
+1. **Barang Masuk**: Klik tombol **"+ Barang Masuk"** untuk mencatat penerimaan logistik baru dari pengadaan berkala. Kuantitas stok otomatis bertambah.
+2. **Barang Keluar**: Klik tombol **"Barang Keluar"** untuk mencatat distribusi ke masing-masing bidang/seksi (contoh: Seksi Irban Wilayah I atau Subbag Keuangan). Kuantitas stok otomatis terpotong.
+3. **Pencarian Cepat**: Masukkan nama barang atau kode pada bilah pencarian untuk menemukan ketersediaan stok dalam hitungan milidetik.
+
+### 8.3 Cetak Lembar Stok & Riwayat Mutasi
+- Klik **"Print Stock"** untuk mencetak laporan rekapitulasi fisik stok opname langsung ke kertas/PDF.
+- Klik **"Riwayat"** (`/assets/atk/history`) untuk meninjau rekaman kronologis perpindahan logistik keluar dan masuk lengkap dengan tanggal dan nomor bukti.
 
 ---
 
-## BAB 9: PELAPORAN & EKSPOR DATA (CSV / EXCEL)
+## BAB 9: MODUL LAYANAN HELPDESK & TIKET ADUAN TIK
 
-### 9.1 Ekspor Spreadsheet Excel / CSV Sekali Klik
+### 9.1 Alur Pembuatan Tiket Aduan Baru (`/helpdesk`)
+1. Akses menu **Layanan Helpdesk** dari bilah navigasi sebelah kiri.
+2. Klik tombol **"Buat Tiket Baru"**.
+3. Lengkapi formulir aduan terpadu:
+   - **Perihal / Masalah**: Tuliskan ringkasan kendala (contoh: *"Printer laserjet di Ruang Irban III macet"*).
+   - **Nama Pelapor / Pegawai**: Nama staf atau seksi yang mengalami kendala.
+   - **Tingkat Prioritas**: Pilih *Rendah (Low)*, *Sedang (Medium)*, atau *Tinggi / Mendesak (High)*.
+   - **Deskripsi Lengkap Kendala**: Rincian kendala teknis, tipe perangkat, serta nomor ruangan.
+4. Klik **"Kirim Tiket"**. Tiket akan masuk ke antrean helpdesk secara real-time.
+
+### 9.2 Penanganan & Pembaruan Status Gangguan
+- Petugas teknisi TIK dapat meninjau seluruh tiket yang masuk pada tabel **Daftar Tiket Aduan & Layanan**.
+- Klik ikon **Ubah (Edit)** untuk memperbarui status pengerjaan:
+  - **Menunggu (Open)**: Tiket baru diterima dan menunggu teknisi ditugaskan.
+  - **Sedang Dikerjakan (In Progress)**: Perangkat sedang dalam proses perbaikan/pengecekan fisik.
+  - **Selesai (Resolved)**: Kendala telah teratasi dan perangkat kembali berfungsi normal.
+  - **Ditutup (Closed)**: Kasus aduan telah diverifikasi tuntas oleh pelapor.
+
+### 9.3 Cetak Laporan Rekapitulasi Tiket Bulanan & Tahunan
+1. Pada toolbar atas, klik tombol **"Cetak Laporan"**.
+2. Pilih salah satu format rekapitulasi:
+   - **Tiket Bulan Ini**: Menghasilkan dokumen cetak resmi laporan aduan pada bulan berjalan.
+   - **Rekapitulasi Tahunan**: Menghasilkan dokumen rekapitulasi gangguan per tahun anggaran.
+3. Dokumen tercetak otomatis menyertakan:
+   - **Kop Surat Kedinasan**: *Pemerintah Kabupaten Trenggalek - Inspektorat*.
+   - **Alamat & Kontak Resmi**: *Jl. KH. Wachid Hasyim No.5 Trenggalek*.
+   - **Tabel Rekapitulasi Kasus**: No, Tanggal, Perihal, Pelapor, Prioritas, Status, dan Keterangan.
+   - **Area Pengesahan Pejabat**: Mengetahui Kepala Inspektorat Daerah lengkap dengan NIP.
+
+---
+
+## BAB 10: MODUL JEJAK AUDIT FORENSIK APIP (AUDIT TRAIL)
+
+### 10.1 Pencatatan Otomatis (*Immutable Audit Log*) (`/audit-trail`)
+- Setiap aktivitas penting dalam sistem dicatat secara otomatis ke dalam tabel database permanen (*immutable database table*) berbasis SQLite WAL.
+- Log audit mencatat:
+  - **Stempel Waktu Real-Time (WIB)** dengan presisi detik.
+  - **Identitas Pelaksana**: Nama lengkap dan NIP pejabat/staf.
+  - **Jenis Aktivitas**: *Masuk (Login)*, *Tambah Aset*, *Mutasi Pegawai*, *Hapus Aset*, *Update Spesifikasi*, *BAST Cetak*, dll.
+  - **Entitas Target**: ID aset, nomor inventaris, atau modul yang diakses.
+  - **Alamat IP & Klien**: IP pengakses (IPv4 / IPv6) serta data browser (*User-Agent*).
+  - **Rincian Perubahan JSON**: Struktur data lengkap sebelum vs sesudah perubahan (*diff value*).
+
+### 10.2 Standar Kepatuhan Inspektorat & Auditor BPK
+- Modul ini dirancang khusus memenuhi standar pemeriksaan aparat pengawas internal pemerintah (**APIP**) dan Badan Pemeriksa Keuangan (**BPK**).
+- Tidak ada tombol hapus (*No Delete Action*) atau tombol manipulasi data pada halaman ini guna menjamin asas keaslian bukti digital (*forensic digital integrity*).
+
+### 10.3 Pencarian Cepat & Inspeksi Detail Perubahan JSON
+- Kotak pencarian memungkinkan auditor mencari berdasarkan nama staf, NIP, jenis mutasi, atau alamat IP pengakses.
+- Filter dropdown memungkinkan penyaringan khusus aktivitas tertentu (contoh: hanya melihat mutasi aset atau aktivitas otentikasi login).
+- Tampilan blok JSON memiliki kontras tinggi dan dapat di-scroll secara horizontal untuk menginspeksi payload perubahan data.
+
+---
+
+## BAB 11: ARSITEKTUR FULLSTACK, SQLITE WAL & ANGGARAN APBD
+
+### 11.1 Integrasi Server Backend Node.js & Database SQLite WAL
+- **Backend API**: Berjalan menggunakan Node.js Express terpusat pada port 5001 dengan middleware keamanan ketat (`helmet`, `cors`, `rate-limit`).
+- **Database Engine**: Menggunakan **SQLite mode WAL (Write-Ahead Logging)** yang berlokasi di folder terproteksi `data/simtik.db`.
+  - Mengizinkan pembacaan (*concurrent read*) berkecepatan tinggi tanpa mengunci proses penulisan (*non-blocking write*).
+  - Sangat hemat sumber daya server VPS (RAM < 60 MB) dan tahan terhadap gangguan pemadaman tiba-tiba (*crash resilient*).
+
+### 11.2 Master Data 70 Pegawai Inspektorat Trenggalek
+- Sistem telah terintegrasi dengan struktur organisasi riil Inspektorat Kabupaten Trenggalek:
+  - Inspektur Daerah & Sekretariat (Subbag Perencanaan, Keuangan, Kepegawaian & Umum).
+  - Inspektur Pembantu Wilayah I (Irban I).
+  - Inspektur Pembantu Wilayah II (Irban II).
+  - Inspektur Pembantu Wilayah III (Irban III).
+  - Inspektur Pembantu Wilayah IV (Irban IV).
+  - Inspektur Pembantu Bidang Investigasi & Pengaduan Masyarakat.
+- Saat proses mutasi atau serah terima, nama dan NIP pegawai dapat dipilih langsung dari master data tanpa risiko salah ketik.
+
+### 11.3 Pengelolaan Aset Berbasis APBD (±Rp 10 Miliar)
+- Sistem mendukung pencatatan sumber pendanaan belanja modal:
+  - Nomor Dokumen Pelaksanaan Anggaran (DPA).
+  - Kode Rekening Belanja Modal TIK (Akun 5.2.02.xx).
+  - Nomor Surat Perintah Pencairan Dana (SP2D) dan tanggal realisasi.
+  - Nomor Kontrak Kerja Sama Pengadaan dengan Vendor/Penyedia.
+
+---
+
+## BAB 12: PELAPORAN, EKSPOR DATA & PEMELIHARAAN SERVER
+
+### 12.1 Ekspor Spreadsheet Excel / CSV Sekali Klik
 1. Buka halaman **Inventaris Aset** (`/assets/inventory`).
 2. Klik tombol hijau **"Ekspor Excel/CSV"** di toolbar atas.
 3. Berkas `Rekapitulasi_Aset_SIMTIK_[Tanggal].csv` akan otomatis diunduh.
 4. Berkas ini menggunakan standar encoding **UTF-8 with BOM (`\uFEFF`)** sehingga saat dibuka pada Microsoft Excel versi berapa pun:
    - Format angka desimal, nominal Rupiah, dan tanggal tidak rusak (*corrupted*).
-   - Memuat 19 kolom data lengkap: dari Kode Barang, NUP, Nama Aset, SN, Kondisi, Pemegang, NIP, Ruangan, hingga Nilai Buku Akuntansi.
+   - Memuat kolom data lengkap: dari Kode Barang, NUP, Nama Aset, SN, Kondisi, Pemegang, NIP, Ruangan, hingga Nilai Buku Akuntansi.
    - Siap diserahkan kepada auditor BPK atau diimpor ke aplikasi SIPD-BMD / SIMAN.
 
-### 9.2 Cetak Laporan Rekapitulasi (PDF / Cetak Layar)
-- **Laporan Akusisi Bulanan**: Rekapitulasi pengadaan barang baru pada bulan berjalan.
-- **Rekapitulasi Buku Aset Tahunan**: Laporan buku induk inventaris lengkap dengan tanda tangan Pejabat Pengelola Aset dan NIP resmi.
+### 12.2 Prosedur Pembaruan & Deployment di Virtualmin/Webmin
+Untuk memperbarui sistem di server VPS Virtualmin setiap ada update dari GitHub:
+1. Masuk ke terminal SSH server VPS:
+   ```bash
+   cd /home/inspektorat/domains/simtik.inspektorat.trenggalekkab.go.id/simtik
+   ```
+2. Jalankan skrip otomatis yang telah disediakan:
+   ```bash
+   bash deploy-virtualmin.sh
+   ```
+   *Skrip ini secara otomatis akan menjalankan `git pull origin main`, `npm run build`, menyalin file produksi ke `../public_html/` (termasuk file konfigurasi `.htaccess`), dan me-restart service backend API PM2.*
+3. Lakukan *Hard Refresh* di browser pengguna (`Ctrl + Shift + R` atau `Cmd + Shift + R`).
 
 ---
 
 ## KESIMPULAN & DUKUNGAN TEKNIS
-Aplikasi SIM-TIK v2.4 telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data sesi, dan kenyamanan antarmuka modern. Untuk kendala operasional lebih lanjut, silakan hubungi Administrator Sistem TIK Instansi Anda.
+Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, serta kenyamanan antarmuka modern ramah mata (*consistent dark mode*). Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
+

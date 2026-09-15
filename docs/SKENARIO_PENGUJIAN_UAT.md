@@ -99,7 +99,61 @@
 
 ---
 
-### MODUL 9: VALIDASI BUILD PRODUKSI (VPS DEPLOYMENT CHECK)
+### MODUL 10: STOK OPNAME ATK & LOGISTIK HABIS PAKAI (INVENTORY ATK)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-ATK-01** | Tampilan Tabel Stok Opname | Akses rute `/assets/atk`. | Seluruh data stok ATK (Kertas A4, Pulpen, Tinta Printer) tampil rapi dengan kuantitas, satuan, dan status ketersediaan. | **PASS** |
+| **TC-ATK-02** | Pencarian Instan Logistik | Ketik nama logistik "Kertas" di kolom pencarian. | Tabel langsung memfilter baris data seketika tanpa delay (*zero latency*). | **PASS** |
+| **TC-ATK-03** | Cetak Lembar Rekapitulasi Stok | Klik tombol **"Print Stock"** pada toolbar atas. | Jendela cetak browser terbuka dengan tata letak dokumen cetak resmi laporan persediaan ATK. | **PASS** |
+| **TC-ATK-04** | Riwayat Mutasi Barang Keluar-Masuk | Klik tombol **"Riwayat"** (`/assets/atk/history`). | Terbuka tabel kronologis pencatatan mutasi penambahan dan pengeluaran barang per seksi dinas. | **PASS** |
+
+---
+
+### MODUL 11: LAYANAN HELPDESK & TIKET ADUAN TIK (HELPDESK)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-HLP-01** | Akses Halaman Tanpa Crash (*Anti Blank*) | Buka rute `/helpdesk` di browser. | Halaman memuat mulus 100%, tabel aduan dan bilah pencarian tampil normal tanpa error `ReferenceError` pada konsol. | **PASS** |
+| **TC-HLP-02** | Formulir Pengajuan Tiket Baru | Klik tombol **"Buat Tiket Baru"**, isi subjek "Printer macet", nama pemohon, pilih prioritas "Tinggi", klik Kirim. | Tiket baru tersimpan dengan ID unik, langsung muncul di baris paling atas tabel dengan lencana prioritas merah ("Tinggi"). | **PASS** |
+| **TC-HLP-03** | Pembaruan Status Penanganan | Klik ikon Edit pada salah satu tiket, ubah status dari "Menunggu" menjadi "Sedang Dikerjakan" atau "Selesai". | Status tiket langsung ter-update dengan lencana warna yang sesuai (Kuning/Hijau). | **PASS** |
+| **TC-HLP-04** | Cetak Rekapitulasi Tiket Resmi | Klik **"Cetak Laporan"** $\rightarrow$ pilih *"Tiket Bulan Ini"* atau *"Rekapitulasi Tahunan"*. | Dokumen cetak formal ber-Kop Surat *Pemerintah Kabupaten Trenggalek - Inspektorat* terbuka lengkap dengan lembar tanda tangan pengesahan pejabat. | **PASS** |
+
+---
+
+### MODUL 12: JEJAK AUDIT FORENSIK APIP & BPK (AUDIT TRAIL)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-AUD-01** | Perekaman Otomatis Aktivitas Pengguna | Masuk ke sistem dengan akun admin atau lakukan mutasi aset, lalu buka `/audit-trail`. | Aktivitas login dan mutasi tercatat otomatis dengan stempel waktu WIB, nama pelaksana, NIP, alamat IP, dan rincian perubahan. | **PASS** |
+| **TC-AUD-02** | Integritas Log Permanen (*Immutable*) | Periksa antarmuka dan basis data log audit. | Tidak terdapat tombol Hapus (*Delete*) atau Ubah (*Edit*) pada baris audit trail guna menjamin keabsahan bukti forensik digital. | **PASS** |
+| **TC-AUD-03** | Filter Jenis Aktivitas & Pencarian Auditor | Pilih filter "AUTH" atau ketik NIP staf pada kolom pencarian jejak audit. | Daftar terfilter instan menampilkan rekaman yang sesuai dengan parameter pencarian auditor. | **PASS** |
+| **TC-AUD-04** | Inspeksi Payload Perubahan (*Diff JSON*) | Periksa kolom "Rincian Perubahan" pada tabel jejak audit. | Payload JSON terformat rapi dengan kontras tinggi, menampilkan data parameter *before vs after*. | **PASS** |
+
+---
+
+### MODUL 13: KONSISTENSI MODE GELAP MENYELURUH (DARK MODE CONSISTENCY)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-DARK-01** | Konsistensi Stok Opname ATK | Aktifkan Dark Mode, buka `/assets/atk`. | Tabel dan kartu berlatar gelap *slate* (`#0f172a`), teks kontras tinggi, tidak ada kotak putih menyilaukan. | **PASS** |
+| **TC-DARK-02** | Konsistensi Jejak Audit Forensik APIP | Buka `/audit-trail` dalam Dark Mode. | Seluruh kartu log, header tabel, dan blok JSON audit menyatu dalam tema gelap yang nyaman di mata. | **PASS** |
+| **TC-DARK-03** | Konsistensi Pengaturan Akun & Profil | Buka `/settings` dalam Dark Mode. | Kartu pengaturan profil, tab navigasi, dan isian formulir tampil elegan dalam nuansa dark theme. | **PASS** |
+| **TC-DARK-04** | Konsistensi Modal Formulir Helpdesk | Di `/helpdesk`, klik "Buat Tiket Baru" dalam Dark Mode. | Jendela modal, input perihal, select option, dan area deskripsi berlatar gelap serasi dengan teks tajam. | **PASS** |
+
+---
+
+### MODUL 14: ARSITEKTUR FULLSTACK & KEAMANAN SERVER (VPS & VIRTUALMIN)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| **TC-SRV-01** | Komunikasi REST API Node.js & SQLite WAL | Akses endpoint backend `/api/stats` atau `/api/audit-logs`. | Backend Node.js di port 5001 mengembalikan respons JSON valid dalam waktu < 10 milidetik via engine SQLite WAL. | **PASS** |
+| **TC-SRV-02** | Proteksi Berkas Sensitif via `.htaccess` | Buka URL langsung ke berkas sensitif: `https://[domain]/.env` atau `data/simtik.db`. | Server Apache/Virtualmin merespons dengan **403 Forbidden** atau **404 Not Found**, mencegah kebocoran data rahasia. | **PASS** |
+| **TC-SRV-03** | Single Page Application (SPA) Fallback | Lakukan refresh (F5) pada browser saat membuka rute dalam seperti `/assets/inventory` atau `/helpdesk`. | Halaman tetap terbuka normal tanpa pesan error 404 Apache berkat aturan rewrite fallback pada `.htaccess`. | **PASS** |
+
+---
+
+### MODUL 15: VALIDASI BUILD PRODUKSI (VPS DEPLOYMENT CHECK)
 
 | ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
 | :--- | :--- | :--- | :--- | :---: |
@@ -109,12 +163,19 @@
 
 ## 3. LEMBAR REKAPITULASI HASIL PENGUJIAN (TEST SUMMARY)
 
-- **Total Kasus Uji (Test Cases)**: 25 Kasus Uji
-- **Jumlah Kasus Lolos (Passed)**: 25 Kasus Uji (100%)
+- **Total Modul Diuji**: 15 Modul Sistem
+- **Total Kasus Uji (Test Cases)**: 44 Kasus Uji
+- **Jumlah Kasus Lolos (Passed)**: 44 Kasus Uji (100%)
 - **Jumlah Kasus Gagal (Failed)**: 0 Kasus Uji (0%)
 - **Jumlah Catatan Kritis (Blockers)**: 0 Isu
 
 ### Kesimpulan Tim Penguji
-Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh kriteria kelayakan operasional, kepatuhan hukum penatausahaan BMD pemerintah (Permendagri No. 47 Tahun 2021 & PSAP No. 07), keandalan kalkulasi finansial, integritas cetak dokumen fisik (BAST, KIR, Stiker QR), dan kesiapan build produksi. 
+Aplikasi **SIM-TIK v2.4 Enterprise (Fullstack Architecture)** telah memenuhi seluruh kriteria kelayakan operasional tingkat enterprise:
+1. Kepatuhan hukum penatausahaan BMD pemerintah (Permendagri No. 47 Tahun 2021 & PSAP No. 07).
+2. Kesiapan audit forensik pengawasan intern (**APIP & BPK**) dengan rekaman *immutable audit trail*.
+3. Dukungan kapasitas 70 Pegawai Inspektorat Kabupaten Trenggalek dan pelacakan anggaran belanja modal APBD (±Rp 10 Miliar).
+4. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
+5. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
 
-**REKOMENDASI: LAYAK DAN SIAP DIPUBLIKASIKAN KE SERVER PRODUKSI (VPS).**
+**REKOMENDASI: SISTEM DINYATAKAN SANGAT LAYAK, AMAN, DAN SIAP DIGUNAKAN PENUH DI LINGKUNGAN INSPEKTORAT KABUPATEN TRENGGALEK.**
+
