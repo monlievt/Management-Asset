@@ -1,0 +1,32 @@
+# .htaccess untuk SIM-TIK di Webmin/Virtualmin (Apache Web Server)
+# File ini otomatis disalin ke dist/ saat build Vite
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Reverse Proxy ke Backend Node.js (Port 5001)
+  # Pastikan mod_proxy dan mod_proxy_http aktif di Apache
+  RewriteRule ^api/(.*)$ http://127.0.0.1:5001/api/$1 [P,L]
+  RewriteRule ^uploads/(.*)$ http://127.0.0.1:5001/uploads/$1 [P,L]
+
+  # 2. SPA Fallback untuk React Router (semua path diarahkan ke index.html)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# 3. Security Headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# 4. Blokir akses ke file sensitif
+<FilesMatch "(\.env|\.db|\.sqlite|\.git|package\.json|package-lock\.json)">
+  Require all denied
+</FilesMatch>
+
+# 5. Nonaktifkan Directory Browsing
+Options -Indexes
