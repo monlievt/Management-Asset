@@ -107,11 +107,11 @@ export default function AuditTrailView() {
             </div>
 
             {/* Kontrol Pencarian & Filter */}
-            <Card className="border-slate-200 dark:border-slate-800">
+            <Card className="border-secondary-200 dark:border-secondary-800">
                 <CardContent className="p-4">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-400" />
                             <Input
                                 type="text"
                                 placeholder="Cari nama pegawai, NIP, aksi, atau IP address..."
@@ -121,11 +121,11 @@ export default function AuditTrailView() {
                             />
                         </div>
                         <div className="flex items-center gap-2">
-                            <Filter className="h-4 w-4 text-slate-400 shrink-0" />
+                            <Filter className="h-4 w-4 text-secondary-400 shrink-0" />
                             <select
                                 value={actionFilter}
                                 onChange={(e) => setActionFilter(e.target.value)}
-                                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                className="rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm text-secondary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-secondary-700 dark:bg-secondary-900 dark:text-secondary-100"
                             >
                                 <option value="ALL">Semua Jenis Aktivitas</option>
                                 <option value="CREATE_ASSET">Tambah Aset Baru</option>
@@ -142,21 +142,21 @@ export default function AuditTrailView() {
             </Card>
 
             {/* Tabel Jejak Audit */}
-            <Card className="border-slate-200 dark:border-slate-800">
-                <CardHeader className="border-b border-slate-100 pb-3 dark:border-slate-800">
+            <Card className="border-secondary-200 dark:border-secondary-800 overflow-hidden">
+                <CardHeader className="border-b border-secondary-100 pb-3 dark:border-secondary-800">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-base font-semibold text-slate-900 dark:text-white">
+                        <CardTitle className="text-base font-semibold text-secondary-900 dark:text-white">
                             Riwayat Aktivitas Tercatat ({filteredLogs.length} dari {totalCount} log)
                         </CardTitle>
-                        <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+                        <span className="text-xs font-mono text-secondary-500 dark:text-secondary-400">
                             Storage: SQLite WAL Immutable
                         </span>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
+                        <table className="w-full text-left text-sm text-secondary-600 dark:text-secondary-300">
+                            <thead className="border-b border-secondary-200 bg-secondary-50 text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:border-secondary-800 dark:bg-secondary-800/60 dark:text-secondary-400">
                                 <tr>
                                     <th className="px-4 py-3">Waktu (WIB)</th>
                                     <th className="px-4 py-3">Pelaksana (Auditor / Staf)</th>
@@ -166,10 +166,10 @@ export default function AuditTrailView() {
                                     <th className="px-4 py-3">Rincian Perubahan</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tbody className="divide-y divide-secondary-100 dark:divide-secondary-800">
                                 {isLoading ? (
                                     <tr>
-                                        <td colSpan="6" className="py-8 text-center text-slate-500 dark:text-slate-400">
+                                        <td colSpan="6" className="py-8 text-center text-secondary-500 dark:text-secondary-400">
                                             <div className="flex items-center justify-center gap-2">
                                                 <RefreshCw className="h-5 w-5 animate-spin text-primary-600" />
                                                 Memuat jejak audit forensik dari database...
@@ -178,21 +178,21 @@ export default function AuditTrailView() {
                                     </tr>
                                 ) : filteredLogs.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="py-8 text-center text-slate-500 dark:text-slate-400">
+                                        <td colSpan="6" className="py-8 text-center text-secondary-500 dark:text-secondary-400">
                                             Tidak ada riwayat aktivitas yang sesuai dengan kriteria filter.
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredLogs.map((log) => (
-                                        <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                                            <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+                                        <tr key={log.id} className="hover:bg-secondary-50/80 dark:hover:bg-secondary-800/40 transition-colors">
+                                            <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-secondary-500 dark:text-secondary-400">
                                                 {log.timestamp}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <div className="font-medium text-slate-900 dark:text-white">
+                                                <div className="font-semibold text-secondary-900 dark:text-white">
                                                     {log.userName}
                                                 </div>
-                                                <div className="text-xs text-slate-400 font-mono">
+                                                <div className="text-xs text-secondary-400 font-mono">
                                                     NIP: {log.userNip || '-'}
                                                 </div>
                                             </td>
@@ -200,26 +200,26 @@ export default function AuditTrailView() {
                                                 {getActionBadge(log.action)}
                                             </td>
                                             <td className="px-4 py-3 font-mono text-xs">
-                                                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                                <span className="font-semibold text-secondary-800 dark:text-secondary-200">
                                                     {log.entity}
                                                 </span>
                                                 {log.entityId && (
-                                                    <span className="text-slate-400"> #{log.entityId}</span>
+                                                    <span className="text-secondary-400"> #{log.entityId}</span>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+                                            <td className="px-4 py-3 font-mono text-xs text-secondary-500 dark:text-secondary-400">
                                                 <div>{log.ipAddress}</div>
-                                                <div className="truncate max-w-[150px] text-[10px] text-slate-400" title={log.userAgent}>
+                                                <div className="truncate max-w-[150px] text-[10px] text-secondary-400" title={log.userAgent}>
                                                     {log.userAgent}
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-xs">
                                                 {log.details ? (
-                                                    <pre className="max-w-xs overflow-x-auto rounded bg-slate-100 p-1.5 font-mono text-[11px] text-slate-800 dark:bg-slate-900 dark:text-slate-200">
+                                                    <pre className="max-w-xs overflow-x-auto rounded bg-secondary-100 border border-secondary-200 dark:border-secondary-800 p-2 font-mono text-[11px] text-secondary-800 dark:bg-secondary-950 dark:text-secondary-200">
                                                         {JSON.stringify(log.details, null, 1)}
                                                     </pre>
                                                 ) : (
-                                                    <span className="text-slate-400">-</span>
+                                                    <span className="text-secondary-400">-</span>
                                                 )}
                                             </td>
                                         </tr>

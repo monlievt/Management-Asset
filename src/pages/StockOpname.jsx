@@ -56,12 +56,12 @@ const ItemCombobox = ({ value, onChange, options, onSelect }) => {
             </div>
 
             {isOpen && search && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-700 rounded-md shadow-lg max-h-60 overflow-auto">
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((opt, i) => (
                             <div
                                 key={i}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                                className="px-4 py-2 text-sm hover:bg-secondary-100 dark:hover:bg-secondary-800 text-secondary-900 dark:text-secondary-100 cursor-pointer flex justify-between items-center"
                                 onClick={() => {
                                     setSearch(opt.name)
                                     onChange(opt.name)
@@ -70,12 +70,12 @@ const ItemCombobox = ({ value, onChange, options, onSelect }) => {
                                 }}
                             >
                                 <span>{opt.name}</span>
-                                <span className="text-gray-400 text-xs">{opt.brand}</span>
+                                <span className="text-secondary-400 dark:text-secondary-500 text-xs">{opt.brand}</span>
                             </div>
                         ))
                     ) : (
-                        <div className="px-4 py-2 text-sm text-gray-500 italic">
-                            Press Enter to create "{search}"
+                        <div className="px-4 py-2 text-sm text-secondary-500 dark:text-secondary-400 italic">
+                            Tekan Enter untuk membuat "{search}"
                         </div>
                     )}
                 </div>
@@ -460,21 +460,28 @@ export default function StockOpname() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight text-secondary-900">Stock Opname ATK</h2>
-                <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">
+                        Stok Opname Logistik ATK
+                    </h2>
+                    <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">
+                        Pencatatan barang habis pakai, mutasi keluar-masuk persediaan, dan cetak berita acara stok.
+                    </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                     <Button variant="outline" onClick={printStockReport}>
-                        <Printer className="mr-2 h-4 w-4" /> Print Stock
+                        <Printer className="mr-2 h-4 w-4" /> Cetak Laporan Stok
                     </Button>
                     <Link to="/assets/atk/history">
                         <Button variant="outline">
-                            <History className="mr-2 h-4 w-4" /> Riwayat
+                            <History className="mr-2 h-4 w-4" /> Riwayat Mutasi
                         </Button>
                     </Link>
-                    <Button variant="destructive" onClick={() => handleOpenModal('outgoing')}>
+                    <Button variant="danger" onClick={() => handleOpenModal('outgoing')}>
                         <ArrowUp className="mr-2 h-4 w-4" /> Barang Keluar
                     </Button>
-                    <Button onClick={() => handleOpenModal('incoming')}>
+                    <Button variant="primary" onClick={() => handleOpenModal('incoming')}>
                         <Plus className="mr-2 h-4 w-4" /> Barang Masuk
                     </Button>
                 </div>
@@ -482,12 +489,12 @@ export default function StockOpname() {
 
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <CardTitle className="text-base font-medium">All Inventory</CardTitle>
+                    <CardTitle className="text-base font-semibold">Daftar Seluruh Persediaan ATK</CardTitle>
                     <div className="flex items-center space-x-2">
                         <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-secondary-500" />
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-secondary-400" />
                             <Input
-                                placeholder="Search items or codes..."
+                                placeholder="Cari nama barang atau kode..."
                                 className="pl-8 w-[250px]"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -499,34 +506,34 @@ export default function StockOpname() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Item Name</TableHead>
-                                <TableHead>Brand</TableHead>
-                                <TableHead>Quantity</TableHead>
-                                <TableHead>Unit</TableHead>
-                                <TableHead>Last Update</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead>Nama Barang</TableHead>
+                                <TableHead>Merek / Brand</TableHead>
+                                <TableHead>Jumlah Stok</TableHead>
+                                <TableHead>Satuan</TableHead>
+                                <TableHead>Pembaruan Terakhir</TableHead>
+                                <TableHead>Status Stok</TableHead>
+                                <TableHead className="text-right">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredStocks.map((item) => (
                                 <TableRow key={item.id}>
-                                    <TableCell className="font-medium">{item.name}</TableCell>
+                                    <TableCell className="font-semibold text-secondary-900 dark:text-white">{item.name}</TableCell>
                                     <TableCell>{item.brand}</TableCell>
-                                    <TableCell>{item.quantity}</TableCell>
+                                    <TableCell className="font-mono font-bold">{item.quantity}</TableCell>
                                     <TableCell>{item.unit}</TableCell>
-                                    <TableCell>{item.lastUpdate}</TableCell>
+                                    <TableCell className="font-mono text-xs text-secondary-500 dark:text-secondary-400">{item.lastUpdate}</TableCell>
                                     <TableCell>
                                         <Badge variant={item.quantity > 5 ? 'success' : 'warning'}>
-                                            {item.quantity > 5 ? 'Available' : 'Limited'}
+                                            {item.quantity > 5 ? 'Tersedia' : 'Stok Menipis'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end space-x-2">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50" onClick={() => handleOpenModal('incoming', item)}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40" onClick={() => handleOpenModal('incoming', item)} title="Ubah Stok">
                                                 <Edit className="h-4 w-4" />
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(item.id)}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40" onClick={() => handleDelete(item.id)} title="Hapus Barang">
                                                 <Trash className="h-4 w-4" />
                                             </Button>
                                         </div>

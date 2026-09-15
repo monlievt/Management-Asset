@@ -192,7 +192,7 @@ export default function StockHistory() {
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
-                    <h2 className="text-3xl font-bold tracking-tight text-secondary-900">Riwayat Transaksi (History)</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">Riwayat Mutasi ATK</h2>
                 </div>
 
                 <div className="flex space-x-2">

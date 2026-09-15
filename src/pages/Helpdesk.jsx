@@ -241,9 +241,16 @@ export default function Helpdesk() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight text-secondary-900">Helpdesk</h2>
-                <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">
+                        Layanan Helpdesk & Tiket TIK
+                    </h2>
+                    <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">
+                        Pengaduan gangguan perangkat keras, permintaan perbaikan, dan dukungan teknis sistem.
+                    </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                     <div className="relative" ref={printMenuRef}>
                         <Button
                             variant="outline"
@@ -251,38 +258,39 @@ export default function Helpdesk() {
                             onClick={() => setIsPrintMenuOpen(!isPrintMenuOpen)}
                         >
                             <Printer className="h-4 w-4" />
-                            Print Report
+                            Cetak Laporan
                         </Button>
 
                         {isPrintMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-secondary-900 rounded-md shadow-xl py-1 z-50 border border-secondary-200 dark:border-secondary-800">
                                 <button
-                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    className="block w-full text-left px-4 py-2 text-sm text-secondary-700 dark:text-secondary-200 hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors"
                                     onClick={() => {
                                         printTicketReport('monthly')
                                         setIsPrintMenuOpen(false)
                                     }}
                                 >
-                                    Laporan Bulanan
+                                    Tiket Bulan Ini
                                 </button>
                                 <button
-                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    className="block w-full text-left px-4 py-2 text-sm text-secondary-700 dark:text-secondary-200 hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors"
                                     onClick={() => {
                                         printTicketReport('yearly')
                                         setIsPrintMenuOpen(false)
                                     }}
                                 >
-                                    Laporan Tahunan
+                                    Rekapitulasi Tahunan
                                 </button>
                             </div>
                         )}
                     </div>
-                    <Button onClick={() => {
-                        setSelectedTicket(null)
-                        setIsModalOpen(true)
-                    }}>
-                        <Plus className="mr-2 h-4 w-4" /> New Ticket
-                    </Button>
+
+                    <CanDo action="create" resource="tickets">
+                        <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            Buat Tiket Baru
+                        </Button>
+                    </CanDo>
                 </div>
             </div>
 

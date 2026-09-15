@@ -72,15 +72,15 @@ export default function Settings() {
     }
 
     const tabs = [
-        { id: "profile", label: "Profile", icon: User },
-        { id: "security", label: "Security", icon: Lock },
+        { id: "profile", label: "Profil Pengguna", icon: User },
+        { id: "security", label: "Keamanan & Kata Sandi", icon: Lock },
     ]
 
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-secondary-900">Settings</h2>
-                <p className="text-secondary-500">Manage your account settings and preferences.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">Pengaturan Akun</h2>
+                <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">Kelola identitas profil, email, dan keamanan akses kata sandi SIM-TIK.</p>
             </div>
 
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
@@ -91,11 +91,13 @@ export default function Settings() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={cn(
-                                    "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-secondary-100",
-                                    activeTab === tab.id ? "bg-secondary-100 text-primary-600" : "text-secondary-900"
+                                    "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                                    activeTab === tab.id
+                                        ? "bg-secondary-100 text-primary-600 dark:bg-secondary-800 dark:text-primary-400 font-semibold"
+                                        : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-800/60 hover:text-secondary-900 dark:hover:text-white"
                                 )}
                             >
-                                <tab.icon className="mr-2 h-4 w-4" />
+                                <tab.icon className="mr-2.5 h-4 w-4" />
                                 {tab.label}
                             </button>
                         ))}
@@ -106,20 +108,20 @@ export default function Settings() {
                     {activeTab === "profile" && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>Profile</CardTitle>
+                                <CardTitle className="text-lg font-semibold">Identitas Pegawai</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none text-secondary-700">Display Name</label>
+                                    <label className="text-sm font-medium leading-none text-secondary-700 dark:text-secondary-300">Nama Lengkap & Gelar</label>
                                     <Input
                                         value={displayName}
                                         onChange={(e) => setDisplayName(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none text-secondary-700">Email</label>
-                                    <Input defaultValue={user.email} disabled />
-                                    <p className="text-[0.8rem] text-secondary-500">Contact IT to change your email.</p>
+                                    <label className="text-sm font-medium leading-none text-secondary-700 dark:text-secondary-300">Alamat Email Kedinasan</label>
+                                    <Input defaultValue={user.email} disabled className="opacity-70 cursor-not-allowed" />
+                                    <p className="text-[0.8rem] text-secondary-500 dark:text-secondary-400">Hubungi Administrator TIK untuk mengubah email terdaftar.</p>
                                 </div>
                             </CardContent>
                             <CardFooter>
@@ -127,7 +129,7 @@ export default function Settings() {
                                     disabled={displayName === user.name}
                                     onClick={handleSave}
                                 >
-                                    Save Changes
+                                    Simpan Perubahan
                                 </Button>
                             </CardFooter>
                         </Card>
@@ -136,26 +138,27 @@ export default function Settings() {
                     {activeTab === "security" && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>Security</CardTitle>
+                                <CardTitle className="text-lg font-semibold">Keamanan & Perubahan Kata Sandi</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {securityMessage.text && (
-                                    <div className={`px-3 py-2 rounded-md text-sm ${securityMessage.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                                    <div className={`px-3 py-2 rounded-md text-sm ${securityMessage.type === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300' : 'bg-green-50 text-green-600 dark:bg-green-950/50 dark:text-green-300'}`}>
                                         {securityMessage.text}
                                     </div>
                                 )}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none text-secondary-700">Current Password</label>
+                                    <label className="text-sm font-medium leading-none text-secondary-700 dark:text-secondary-300">Kata Sandi Saat Ini</label>
                                     <div className="relative">
                                         <Input
                                             type={showCurrentPassword ? "text" : "password"}
                                             value={currentPassword}
                                             onChange={(e) => setCurrentPassword(e.target.value)}
+                                            placeholder="Masukkan kata sandi lama..."
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-500 hover:text-secondary-700 focus:outline-none"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600 dark:hover:text-secondary-200 focus:outline-none"
                                         >
                                             {showCurrentPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -166,17 +169,18 @@ export default function Settings() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none text-secondary-700">New Password <span className="text-red-500">*</span></label>
+                                    <label className="text-sm font-medium leading-none text-secondary-700 dark:text-secondary-300">Kata Sandi Baru <span className="text-red-500">*</span></label>
                                     <div className="relative">
                                         <Input
                                             type={showNewPassword ? "text" : "password"}
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Minimal 8 karakter..."
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowNewPassword(!showNewPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-500 hover:text-secondary-700 focus:outline-none"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600 dark:hover:text-secondary-200 focus:outline-none"
                                         >
                                             {showNewPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -187,17 +191,18 @@ export default function Settings() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none text-secondary-700">Confirm Password <span className="text-red-500">*</span></label>
+                                    <label className="text-sm font-medium leading-none text-secondary-700 dark:text-secondary-300">Konfirmasi Kata Sandi Baru <span className="text-red-500">*</span></label>
                                     <div className="relative">
                                         <Input
                                             type={showConfirmPassword ? "text" : "password"}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="Ulangi kata sandi baru..."
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-500 hover:text-secondary-700 focus:outline-none"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600 dark:hover:text-secondary-200 focus:outline-none"
                                         >
                                             {showConfirmPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -209,7 +214,7 @@ export default function Settings() {
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Button onClick={handleUpdatePassword}>Update Password</Button>
+                                <Button onClick={handleUpdatePassword}>Perbarui Kata Sandi</Button>
                             </CardFooter>
                         </Card>
                     )}
