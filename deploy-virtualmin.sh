@@ -33,9 +33,13 @@ if [ ! -f "$APP_DIR/.env" ]; then
     sed -i "s/replace_with_a_secure_random_64_char_secret_key_in_production/$RANDOM_SECRET/g" "$APP_DIR/.env" 2>/dev/null || true
 fi
 
-# 2. Install dependensi Node.js
-echo "📦 Menginstal dependensi Node.js..."
+# 2. Ambil update terbaru dari GitHub
+echo "📥 Mengambil pembaruan terbaru dari GitHub (git pull)..."
 cd "$APP_DIR"
+git pull origin main
+
+# 3. Install dependensi Node.js
+echo "📦 Menginstal dependensi Node.js..."
 npm install --production=false
 
 # 3. Build frontend statis Vite
