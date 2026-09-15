@@ -1,7 +1,12 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "../../lib/utils"
-import { LayoutDashboard, Monitor, LifeBuoy, Settings, ChevronDown, ChevronRight, Layers, Archive, X, Laptop, ShieldCheck, Users } from "lucide-react"
+import {
+    LayoutDashboard, Monitor, LifeBuoy, Settings, ChevronDown,
+    ChevronRight, Layers, Archive, X, Laptop, ShieldCheck, Users,
+    Sparkles
+} from "lucide-react"
 import { useState } from "react"
+import { ReleaseNotesModal } from "../common/ReleaseNotesModal"
 
 const sidebarItems = [
     { icon: LayoutDashboard, label: "Dasbor Utama", href: "/" },
@@ -24,6 +29,7 @@ const sidebarItems = [
 export function Sidebar({ className, isMobileOpen = false, onCloseMobile = () => {} }) {
     const location = useLocation()
     const [openMenus, setOpenMenus] = useState({ "/assets": true })
+    const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false)
 
     const toggleMenu = (href) => {
         setOpenMenus(prev => ({ ...prev, [href]: !prev[href] }))
@@ -132,14 +138,26 @@ export function Sidebar({ className, isMobileOpen = false, onCloseMobile = () =>
 
             {/* Footer Sidebar */}
             <div className="p-4 border-t border-secondary-100 dark:border-secondary-800">
-                <div className="p-3 rounded-xl bg-secondary-50 dark:bg-secondary-800/50 border border-secondary-200/60 dark:border-secondary-700/60">
-                    <p className="text-[11px] font-semibold text-secondary-800 dark:text-secondary-200">
-                        SIM-TIK v2.4 Enterprise
+                <button
+                    type="button"
+                    onClick={() => setIsReleaseModalOpen(true)}
+                    className="w-full text-left p-3 rounded-xl bg-secondary-50 hover:bg-secondary-100 dark:bg-secondary-800/50 dark:hover:bg-secondary-800/80 border border-secondary-200/70 dark:border-secondary-700/60 transition group cursor-pointer"
+                    title="Klik untuk melihat Catatan Rilis & Fitur Terbaru"
+                >
+                    <div className="flex items-center justify-between">
+                        <p className="text-[11px] font-bold text-secondary-900 dark:text-white flex items-center gap-1.5">
+                            <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
+                            SIM-TIK v2.5 Enterprise
+                        </p>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-semibold">
+                            Terupdate
+                        </span>
+                    </div>
+                    <p className="text-[10px] text-secondary-500 dark:text-secondary-400 mt-1 flex items-center justify-between">
+                        <span>Lihat Fitur & Rilis</span>
+                        <ChevronRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                     </p>
-                    <p className="text-[10px] text-secondary-500 mt-0.5">
-                        Siap Produksi & VPS
-                    </p>
-                </div>
+                </button>
             </div>
         </div>
     )
@@ -166,6 +184,12 @@ export function Sidebar({ className, isMobileOpen = false, onCloseMobile = () =>
                     </div>
                 </div>
             )}
+
+            {/* Modal Catatan Rilis Versi Terupdate */}
+            <ReleaseNotesModal
+                isOpen={isReleaseModalOpen}
+                onClose={() => setIsReleaseModalOpen(false)}
+            />
         </>
     )
 }

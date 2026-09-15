@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Bell, User, LogOut, Settings, ChevronDown, Sun, Moon, Menu } from "lucide-react"
+import { Bell, User, LogOut, Settings, ChevronDown, Sun, Moon, Menu, Sparkles } from "lucide-react"
 import { Button } from "../ui/Button"
 import { useUser } from "../../context/UserContext"
 import { useTheme } from "../../context/ThemeContext"
+import { ReleaseNotesModal } from "../common/ReleaseNotesModal"
 
 export function Header({ onToggleMobileSidebar }) {
     const { user } = useUser()
     const { theme, toggleTheme } = useTheme()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false)
     const dropdownRef = useRef(null)
     const navigate = useNavigate()
 
@@ -50,9 +52,20 @@ export function Header({ onToggleMobileSidebar }) {
                 </button>
 
                 <div>
-                    <h1 className="text-base sm:text-lg font-bold text-secondary-900 dark:text-white tracking-tight">
-                        SIM-TIK
-                    </h1>
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-base sm:text-lg font-bold text-secondary-900 dark:text-white tracking-tight">
+                            SIM-TIK
+                        </h1>
+                        <button
+                            type="button"
+                            onClick={() => setIsReleaseModalOpen(true)}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/80 text-primary-700 dark:text-primary-300 border border-primary-200/80 dark:border-primary-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition cursor-pointer"
+                            title="Klik untuk melihat Catatan Rilis & Fitur Terupdate"
+                        >
+                            <Sparkles className="h-3 w-3 text-amber-500" />
+                            <span>v2.5 Enterprise</span>
+                        </button>
+                    </div>
                     <p className="text-[11px] text-secondary-500 dark:text-secondary-400 hidden sm:block">
                         Sistem Informasi Manajemen Aset & Logistik
                     </p>
@@ -122,6 +135,18 @@ export function Header({ onToggleMobileSidebar }) {
                             </Link>
 
                             <button
+                                type="button"
+                                onClick={() => {
+                                    setIsDropdownOpen(false)
+                                    setIsReleaseModalOpen(true)
+                                }}
+                                className="flex w-full items-center px-4 py-2.5 text-xs text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors text-left"
+                            >
+                                <Sparkles className="mr-2.5 h-4 w-4 text-amber-500" />
+                                Catatan Rilis v2.5.0
+                            </button>
+
+                            <button
                                 onClick={handleLogout}
                                 className="flex w-full items-center px-4 py-2.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors border-t border-secondary-100 dark:border-secondary-800 mt-1"
                             >
@@ -132,6 +157,12 @@ export function Header({ onToggleMobileSidebar }) {
                     )}
                 </div>
             </div>
+
+            {/* Modal Catatan Rilis */}
+            <ReleaseNotesModal
+                isOpen={isReleaseModalOpen}
+                onClose={() => setIsReleaseModalOpen(false)}
+            />
         </header>
     )
 }

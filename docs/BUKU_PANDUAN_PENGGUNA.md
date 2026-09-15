@@ -1,6 +1,6 @@
 # BUKU PANDUAN PENGGUNA (USER MANUAL)
 ## SISTEM INFORMASI MANAJEMEN ASET & LOGISTIK TIK (SIM-TIK)
-### Versi 2.4 Enterprise — Standar Permendagri No. 47 Tahun 2021 & PSAP No. 07
+### Versi 2.5.0 Enterprise — Standar Permendagri No. 47 Tahun 2021 & PSAP No. 07
 
 ---
 
