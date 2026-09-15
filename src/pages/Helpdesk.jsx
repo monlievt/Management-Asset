@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { Plus, Search, Edit, Trash, Printer } from "lucide-react"
+import { Plus, Search, Edit, Trash, Printer, Filter, MessageSquare } from "lucide-react"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table"
@@ -285,7 +285,7 @@ export default function Helpdesk() {
                         )}
                     </div>
 
-                    <CanDo action="create" resource="tickets">
+                    <CanDo permission="helpdesk.create">
                         <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
                             <Plus className="h-4 w-4" />
                             Buat Tiket Baru
@@ -296,12 +296,12 @@ export default function Helpdesk() {
 
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <CardTitle className="text-base font-medium">All Tickets</CardTitle>
+                    <CardTitle className="text-base font-semibold">Daftar Tiket Aduan & Layanan</CardTitle>
                     <div className="flex items-center space-x-2">
                         <div className="relative">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-secondary-500" />
                             <Input
-                                placeholder="Search tickets..."
+                                placeholder="Cari tiket atau nama pelapor..."
                                 className="pl-8 w-[250px]"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -316,12 +316,12 @@ export default function Helpdesk() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Subject</TableHead>
-                                <TableHead>Requester</TableHead>
-                                <TableHead>Priority</TableHead>
+                                <TableHead>Perihal / Kendala</TableHead>
+                                <TableHead>Pelapor</TableHead>
+                                <TableHead>Prioritas</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead>Tanggal Lapor</TableHead>
+                                <TableHead className="text-right">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -335,20 +335,24 @@ export default function Helpdesk() {
                                     </TableCell>
                                     <TableCell>{ticket.requester}</TableCell>
                                     <TableCell>
-                                        <Badge variant={getPriorityBadge(ticket.priority)}>{ticket.priority}</Badge>
+                                        <Badge variant={getPriorityBadge(ticket.priority)}>
+                                            {ticket.priority === 'High' ? 'Tinggi' : ticket.priority === 'Medium' ? 'Sedang' : ticket.priority === 'Low' ? 'Rendah' : ticket.priority}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className={
-                                            ticket.status === 'Open' ? 'text-blue-600 border-blue-200 bg-blue-50' :
-                                                ticket.status === 'In Progress' ? 'text-amber-600 border-amber-200 bg-amber-50' :
-                                                    ticket.status === 'Resolved' ? 'text-emerald-600 border-emerald-200 bg-emerald-50' : ''
-                                        }>{ticket.status}</Badge>
+                                            ticket.status === 'Open' ? 'text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-400' :
+                                                ticket.status === 'In Progress' ? 'text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-400' :
+                                                    ticket.status === 'Resolved' ? 'text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-400' : ''
+                                        }>
+                                            {ticket.status === 'Open' ? 'Menunggu' : ticket.status === 'In Progress' ? 'Diproses' : ticket.status === 'Resolved' ? 'Selesai' : ticket.status === 'Closed' ? 'Ditutup' : ticket.status}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell>{ticket.date}</TableCell>
                                     <TableCell className="text-right">
                                             <div className="flex justify-end space-x-2">
                                             <CanDo permission="helpdesk.edit">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50" onClick={() => {
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-secondary-800" onClick={() => {
                                                     setSelectedTicket(ticket)
                                                     setIsModalOpen(true)
                                                 }}>
@@ -356,7 +360,7 @@ export default function Helpdesk() {
                                                 </Button>
                                             </CanDo>
                                             <CanDo permission="helpdesk.delete">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteTicket(ticket)}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-secondary-800" onClick={() => handleDeleteTicket(ticket)}>
                                                     <Trash className="h-4 w-4" />
                                                 </Button>
                                             </CanDo>
@@ -375,7 +379,7 @@ export default function Helpdesk() {
                     setIsModalOpen(false)
                     setSelectedTicket(null)
                 }}
-                title={selectedTicket ? "Edit Ticket" : "Submit Tiket Baru"}
+                title={selectedTicket ? "Ubah Data Tiket" : "Buat Tiket Pengaduan Baru"}
             >
                 <TicketForm
                     initialData={selectedTicket}

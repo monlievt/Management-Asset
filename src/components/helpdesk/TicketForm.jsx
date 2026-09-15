@@ -21,57 +21,57 @@ export function TicketForm({ onCancel, onSubmit, initialData }) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-secondary-900 dark:text-secondary-100">
             <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Subject</label>
-                <Input name="subject" value={formData.subject} onChange={handleChange} placeholder="e.g. Internet slow" required />
+                <label className="text-sm font-medium leading-none text-secondary-900 dark:text-secondary-200">Perihal / Masalah</label>
+                <Input name="subject" value={formData.subject} onChange={handleChange} placeholder="Contoh: Printer kantor tidak merespon" required />
             </div>
             <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Requester Name</label>
-                <Input name="requester" value={formData.requester} onChange={handleChange} placeholder="e.g. John Doe" required />
+                <label className="text-sm font-medium leading-none text-secondary-900 dark:text-secondary-200">Nama Pelapor / Pegawai</label>
+                <Input name="requester" value={formData.requester} onChange={handleChange} placeholder="Contoh: Irban Wilayah I" required />
             </div>
             <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Priority</label>
+                <label className="text-sm font-medium leading-none text-secondary-900 dark:text-secondary-200">Tingkat Prioritas</label>
                 <select
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                    className="flex h-10 w-full rounded-md border border-secondary-200 bg-white dark:bg-secondary-900 dark:border-secondary-700 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                 >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
+                    <option value="Low">Rendah (Low)</option>
+                    <option value="Medium">Sedang (Medium)</option>
+                    <option value="High">Tinggi / Mendesak (High)</option>
                 </select>
             </div>
             {initialData && (
                 <div className="space-y-2">
-                    <label className="text-sm font-medium leading-none">Status</label>
+                    <label className="text-sm font-medium leading-none text-secondary-900 dark:text-secondary-200">Status Penanganan</label>
                     <select
                         name="status"
                         value={formData.status || "Open"}
                         onChange={handleChange}
-                        className="flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                        className="flex h-10 w-full rounded-md border border-secondary-200 bg-white dark:bg-secondary-900 dark:border-secondary-700 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                     >
-                        <option value="Open">Open</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
-                        <option value="Closed">Closed</option>
+                        <option value="Open">Menunggu Tindak Lanjut (Open)</option>
+                        <option value="In Progress">Sedang Dikerjakan (In Progress)</option>
+                        <option value="Resolved">Selesai Diperbaiki (Resolved)</option>
+                        <option value="Closed">Ditutup (Closed)</option>
                     </select>
                 </div>
             )}
             <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Description</label>
+                <label className="text-sm font-medium leading-none text-secondary-900 dark:text-secondary-200">Deskripsi Lengkap Kendala</label>
                 <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className="flex min-h-[80px] w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-                    placeholder="Describe the issue..."
+                    className="flex min-h-[80px] w-full rounded-md border border-secondary-200 bg-white dark:bg-secondary-900 dark:border-secondary-700 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                    placeholder="Tuliskan detail kendala, lokasi ruangan, atau nomor seri perangkat..."
                 />
             </div>
             <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-                <Button type="submit">Submit Ticket</Button>
+                <Button type="button" variant="outline" onClick={onCancel}>Batal</Button>
+                <Button type="submit">{initialData ? "Simpan Perubahan" : "Kirim Tiket"}</Button>
             </div>
         </form>
     )
