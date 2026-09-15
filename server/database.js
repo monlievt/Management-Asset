@@ -36,12 +36,17 @@ export function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nip TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
+            name_without_degree TEXT,
+            email TEXT,
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'user', -- superadmin, pengurus_barang, auditor, p2upd, teknisi, user
             position TEXT,                     -- Jabatan: Inspektur, Sekretaris, Irban, Auditor Madya, dll
             department TEXT,                   -- Bidang: Irban I, Irban II, Irban III, Irban IV, Irban Investigasi, Sekretariat
             phone TEXT,
+            birth_place TEXT,
+            birth_date TEXT,
+            rank TEXT,
+            class_grade TEXT,
             is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
             updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
@@ -220,7 +225,78 @@ export function initDatabase() {
         CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_nip);
     `);
 
+    // Migrasi kolom tabel users secara aman
+    const userCols = db.pragma('table_info(users)').map(c => c.name);
+    if (!userCols.includes('name_without_degree')) db.exec('ALTER TABLE users ADD COLUMN name_without_degree TEXT');
+    if (!userCols.includes('birth_place')) db.exec('ALTER TABLE users ADD COLUMN birth_place TEXT');
+    if (!userCols.includes('birth_date')) db.exec('ALTER TABLE users ADD COLUMN birth_date TEXT');
+    if (!userCols.includes('rank')) db.exec('ALTER TABLE users ADD COLUMN rank TEXT');
+    if (!userCols.includes('class_grade')) db.exec('ALTER TABLE users ADD COLUMN class_grade TEXT');
+
+    // Sinkronisasi data master pegawai dari employees.json
+    syncMasterEmployees();
+
     seedInitialData();
+}
+
+/**
+ * Sinkronisasi Master Pegawai Resmi dari berkas employees.json
+ */
+function syncMasterEmployees() {
+    try {
+        const jsonPath = path.resolve(__dirname, '../src/data/employees.json');
+        if (!fs.existsSync(jsonPath)) return;
+
+        const employees = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        const defaultPasswordHash = bcrypt.hashSync('Inspektorat2026!', 10);
+
+        const upsert = db.prepare(`
+            INSERT INTO users (
+                nip, name, name_without_degree, email, password_hash, role,
+                position, department, phone, birth_place, birth_date, rank, class_grade, is_active
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            ON CONFLICT(nip) DO UPDATE SET
+                name = excluded.name,
+                name_without_degree = excluded.name_without_degree,
+                email = CASE WHEN excluded.email != '-' THEN excluded.email ELSE users.email END,
+                position = excluded.position,
+                department = excluded.department,
+                phone = CASE WHEN excluded.phone != '-' THEN excluded.phone ELSE users.phone END,
+                birth_place = excluded.birth_place,
+                birth_date = excluded.birth_date,
+                rank = excluded.rank,
+                class_grade = excluded.class_grade,
+                is_active = 1
+        `);
+
+        for (const emp of employees) {
+            if (emp.nip && emp.nip !== '-') {
+                let role = 'auditor';
+                if (emp.name.toLowerCase().includes('nandito')) role = 'superadmin';
+                else if (emp.name.toLowerCase().includes('sigit prasetyo')) role = 'pengurus_barang';
+                else if (emp.position && emp.position.toLowerCase().includes('ppupd')) role = 'p2upd';
+                else if (emp.position && emp.position.toLowerCase().includes('komputer')) role = 'teknisi';
+
+                upsert.run(
+                    emp.nip,
+                    emp.name,
+                    emp.nameWithoutDegree || emp.name,
+                    emp.email || `${emp.nip}@inspektorat.trenggalekkab.go.id`,
+                    defaultPasswordHash,
+                    role,
+                    emp.position,
+                    emp.department,
+                    emp.phone,
+                    emp.birthPlace,
+                    emp.birthDate,
+                    emp.rank,
+                    emp.classGrade
+                );
+            }
+        }
+    } catch (e) {
+        console.warn('[SYNC_EMPLOYEES_WARN]', e.message);
+    }
 }
 
 /**

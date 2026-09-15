@@ -255,8 +255,8 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
                         className="h-8 text-sm"
                     />
                     <datalist id="employee-list">
-                        {EMPLOYEE_LIST.map((name, i) => (
-                            <option key={i} value={name} />
+                        {EMPLOYEE_LIST.map((emp, i) => (
+                            <option key={i} value={typeof emp === 'object' ? emp.name : emp} />
                         ))}
                     </datalist>
                 </div>

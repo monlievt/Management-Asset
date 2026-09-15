@@ -57,6 +57,12 @@
 14. [Bab 12: Pelaporan, Ekspor Data & Pemeliharaan Server](#bab-12-pelaporan-ekspor-data--pemeliharaan-server)
     - 12.1 Ekspor Spreadsheet Excel / CSV (UTF-8 BOM)
     - 12.2 Prosedur Pembaruan & Deployment di Virtualmin/Webmin
+15. [Bab 13: Modul Manajemen Data Pegawai (CRUD ASN)](#bab-13-modul-manajemen-data-pegawai-crud-asn)
+    - 13.1 Master Data 70 Pegawai Inspektorat (PNS & PPPK)
+    - 13.2 Tambah Pegawai Baru (Create)
+    - 13.3 Pembaruan Data Pegawai (Update)
+    - 13.4 Proteksi Hapus Pegawai & Integritas Aset (Delete)
+    - 13.5 Ekspor Data Pegawai ke Spreadsheet Excel/CSV
 
 ---
 
@@ -430,6 +436,49 @@ Untuk memperbarui sistem di server VPS Virtualmin setiap ada update dari GitHub:
 
 ---
 
+## BAB 13: MODUL MANAJEMEN DATA PEGAWAI (CRUD ASN)
+
+### 13.1 Master Data 70 Pegawai Inspektorat (PNS & PPPK) (`/employees`)
+Modul ini mengelola master data aparatur sipil negara (ASN) dan staf pada Inspektorat Kabupaten Trenggalek yang bersumber dari berkas resmi `docs/data-pegawai.csv`:
+- **Struktur Kolom**: No, NIP, Nama Lengkap dengan Gelar, Nama Tanpa Gelar, Bidang/Inspektur Pembantu, Jabatan Dinas, Pangkat/Golongan, Tempat & Tanggal Lahir, Nomor WhatsApp, dan Email Aktif.
+- **Pencarian Cepat & Filter**: Memungkinkan pencarian instan berdasarkan nama pegawai, NIP (18 digit), atau jabatan, serta filter khusus per bidang/seksi (Irban I, Irban II, Irban III, Irban IV, Irban Khusus/Investigasi, Sekretariat).
+- **Statistik ASN**: Kartu ringkasan jumlah total pegawai, fungsional pemeriksa APIP (Auditor & PPUPD), pejabat struktural, serta staf operasional.
+
+### 13.2 Tambah Pegawai Baru (Create)
+1. Akses menu **Manajemen Pegawai** dari sidebar navigasi.
+2. Klik tombol **"Tambah Pegawai Baru"** di pojok kanan atas.
+3. Masukkan data pegawai pada modal formulir:
+   - Nama Lengkap dengan Gelar (wajib).
+   - NIP (sistem memvalidasi keunikan NIP agar tidak terjadi duplikasi).
+   - Bidang / Unit Kerja (pilih dari dropdown).
+   - Jabatan, Pangkat, dan Golongan ruang (IV/c s/d I).
+   - Tempat & Tanggal Lahir.
+   - Nomor WhatsApp aktif (otomatis membentuk tautan chat langsung).
+   - Alamat email kedinasan.
+4. Klik tombol **"Tambah Pegawai"**. Data baru langsung tersimpan ke database SQLite WAL dan tercatat pada Jejak Audit Forensik APIP (`ADD_EMPLOYEE`).
+
+### 13.3 Pembaruan Data Pegawai (Update)
+1. Pada baris pegawai yang ingin diubah, klik tombol ikon pensil **Ubah (Edit)**.
+2. Formulir modal akan terisi otomatis dengan data pegawai saat ini.
+3. Perbarui informasi yang diperlukan (misal: kenaikan pangkat/golongan, mutasi antar-Irban, atau pergantian nomor HP).
+4. Klik **"Simpan Perubahan"**. Sistem memperbarui data pegawai dan secara otomatis menyinkronkan nama pemegang pada aset yang sedang aktif dipinjam oleh pegawai tersebut.
+5. Aktivitas tercatat pada Jejak Audit APIP (`UPDATE_EMPLOYEE`) lengkap dengan rekaman data lama vs data baru.
+
+### 13.4 Proteksi Hapus Pegawai & Integritas Aset (Delete)
+1. Klik tombol ikon tempat sampah **Hapus (Delete)** pada baris pegawai.
+2. **Proteksi Integritas Aset Dinas**:
+   - Sistem melakukan pengecekan silang otomatis terhadap inventaris aset (`assets` table).
+   - Jika pegawai tercatat **masih memegang aset inventaris** (*Status: In Use*), tombol konfirmasi hapus akan **dikunci (disabled)** dan muncul peringatan merah yang menampilkan rincian barang inventaris beserta nomor NUP yang masih dipegang pegawai tersebut.
+   - Petugas diwajibkan melakukan serah terima / mutasi kembali aset ke gudang logistik terlebih dahulu sebelum data pegawai dapat dihapus.
+3. Jika pegawai tidak memegang aset, klik **"Ya, Hapus Pegawai"** untuk menonaktifkan data pegawai dari sistem penatausahaan. Aktivitas tercatat pada Jejak Audit (`DELETE_EMPLOYEE`).
+
+### 13.5 Ekspor Data Pegawai ke Spreadsheet Excel/CSV
+1. Klik tombol **"Ekspor CSV"** di bilah atas halaman `/employees`.
+2. Berkas CSV ber-encoding **UTF-8 with BOM (`\uFEFF`)** akan langsung terunduh secara otomatis.
+3. Berkas memuat 12 kolom master data ASN yang rapi dan siap dicetak atau dianalisis langsung menggunakan Microsoft Excel tanpa masalah karakter rusak.
+
+---
+
 ## KESIMPULAN & DUKUNGAN TEKNIS
-Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, serta kenyamanan antarmuka modern ramah mata (*consistent dark mode*). Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
+Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, master data kepegawaian ASN terpadu, serta kenyamanan antarmuka modern ramah mata (*consistent dark mode*). Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
 

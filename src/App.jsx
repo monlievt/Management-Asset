@@ -19,6 +19,7 @@ import AssetDetailView from "./pages/AssetDetailView"
 import BastPrintView from "./pages/BastPrintView"
 import KirPrintView from "./pages/KirPrintView"
 import AuditTrailView from "./pages/AuditTrailView"
+import Employees from "./pages/Employees"
 
 function App() {
   return (
@@ -59,7 +60,9 @@ function App() {
         <Route path="assets/atk" element={<StockOpname />} />
         <Route path="assets/atk/history" element={<StockHistory />} />
 
-        {/* Modul Helpdesk, Audit Trail & Pengaturan */}
+        {/* Modul Helpdesk, Pegawai, Audit Trail & Pengaturan */}
+        <Route path="employees" element={<Employees />} />
+        <Route path="pegawai" element={<Navigate to="/employees" replace />} />
         <Route path="helpdesk" element={<Helpdesk />} />
         <Route path="audit-trail" element={<AuditTrailView />} />
         <Route path="settings" element={<Settings />} />

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "../../lib/utils"
-import { LayoutDashboard, Monitor, LifeBuoy, Settings, ChevronDown, ChevronRight, Layers, Archive, X, Laptop, ShieldCheck } from "lucide-react"
+import { LayoutDashboard, Monitor, LifeBuoy, Settings, ChevronDown, ChevronRight, Layers, Archive, X, Laptop, ShieldCheck, Users } from "lucide-react"
 import { useState } from "react"
 
 const sidebarItems = [
@@ -15,6 +15,7 @@ const sidebarItems = [
             { icon: Archive, label: "Stok Opname ATK", href: "/assets/atk" },
         ]
     },
+    { icon: Users, label: "Manajemen Pegawai", href: "/employees" },
     { icon: ShieldCheck, label: "Jejak Audit APIP", href: "/audit-trail" },
     { icon: LifeBuoy, label: "Layanan Helpdesk", href: "/helpdesk" },
     { icon: Settings, label: "Pengaturan Sistem", href: "/settings" }

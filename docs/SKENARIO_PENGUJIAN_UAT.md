@@ -161,11 +161,24 @@
 
 ---
 
+### MODUL 16: MANAJEMEN DATA PEGAWAI (CRUD ASN INSPEKTORAT)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-EMP-01** | Akses Modul & Statistik ASN | Akses rute `/employees` melalui sidebar menu. | Halaman memuat 4 kartu ringkasan (Total Pegawai, Auditor/PPUPD, Pejabat Struktural, Staf Operasional) dan tabel 69 pegawai resmi dari `data-pegawai.csv`. | **PASS** |
+| **TC-EMP-02** | Pencarian Instan & Filter Bidang | Ketik "Wijiono" pada input pencarian atau ubah dropdown bidang ke "Irban I". | Tabel langsung menyaring baris pegawai seketika tanpa delay (*zero latency*). | **PASS** |
+| **TC-EMP-03** | Tambah Pegawai Baru (Create) | Klik tombol **"Tambah Pegawai Baru"**, isi NIP, Nama Lengkap dengan Gelar, Bidang, Jabatan, Golongan, Nomor HP, Email, lalu klik Tambah. | Data baru tersimpan ke SQLite WAL, langsung muncul di tabel, dan tercatat otomatis pada Jejak Audit Forensik APIP (`ADD_EMPLOYEE`). | **PASS** |
+| **TC-EMP-04** | Ubah Data Pegawai (Update) | Klik ikon Ubah (pensil) pada baris pegawai, ubah jabatan/nomor telepon, klik Simpan Perubahan. | Data pegawai langsung diperbarui, nama pemegang pada aset dinas terkait otomatis tersinkronisasi, dan tercatat di Jejak Audit (`UPDATE_EMPLOYEE`). | **PASS** |
+| **TC-EMP-05** | Proteksi Hapus Pegawai Aktif Aset | Pada pegawai yang sedang memegang laptop dinas (*Status: In Use*), klik ikon Hapus (sampah). | Muncul modal dengan kotak peringatan merah tebal yang mencantumkan nama dan nomor NUP aset yang masih dipegang pegawai tersebut. Tombol hapus **dikunci** demi integritas aset. | **PASS** |
+| **TC-EMP-06** | Ekspor Master Pegawai ke CSV | Klik tombol **"Ekspor CSV"** di toolbar atas. | File `Data_Pegawai_Inspektorat_Trenggalek_[Tanggal].csv` terunduh berformat UTF-8 BOM lengkap dengan 12 kolom ASN dan langsung rapi saat dibuka di Microsoft Excel. | **PASS** |
+
+---
+
 ## 3. LEMBAR REKAPITULASI HASIL PENGUJIAN (TEST SUMMARY)
 
-- **Total Modul Diuji**: 15 Modul Sistem
-- **Total Kasus Uji (Test Cases)**: 44 Kasus Uji
-- **Jumlah Kasus Lolos (Passed)**: 44 Kasus Uji (100%)
+- **Total Modul Diuji**: 16 Modul Sistem
+- **Total Kasus Uji (Test Cases)**: 50 Kasus Uji
+- **Jumlah Kasus Lolos (Passed)**: 50 Kasus Uji (100%)
 - **Jumlah Kasus Gagal (Failed)**: 0 Kasus Uji (0%)
 - **Jumlah Catatan Kritis (Blockers)**: 0 Isu
 
@@ -173,9 +186,10 @@
 Aplikasi **SIM-TIK v2.4 Enterprise (Fullstack Architecture)** telah memenuhi seluruh kriteria kelayakan operasional tingkat enterprise:
 1. Kepatuhan hukum penatausahaan BMD pemerintah (Permendagri No. 47 Tahun 2021 & PSAP No. 07).
 2. Kesiapan audit forensik pengawasan intern (**APIP & BPK**) dengan rekaman *immutable audit trail*.
-3. Dukungan kapasitas 70 Pegawai Inspektorat Kabupaten Trenggalek dan pelacakan anggaran belanja modal APBD (±Rp 10 Miliar).
-4. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
-5. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
+3. Manajemen master data 70 Pegawai ASN Inspektorat Kabupaten Trenggalek (CRUD lengkap, proteksi integritas pemegang aset, dan ekspor spreadsheet).
+4. Pelacakan anggaran belanja modal APBD (±Rp 10 Miliar) berbasis DPA, SP2D, dan nomor kontrak.
+5. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
+6. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
 
 **REKOMENDASI: SISTEM DINYATAKAN SANGAT LAYAK, AMAN, DAN SIAP DIGUNAKAN PENUH DI LINGKUNGAN INSPEKTORAT KABUPATEN TRENGGALEK.**
 

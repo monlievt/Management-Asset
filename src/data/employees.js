@@ -1,27 +1,190 @@
 /**
- * Daftar nama pegawai Inspektorat Kabupaten Trenggalek.
- *
- * CATATAN:
- * File ini berisi data internal instansi. Pastikan repositori ini PRIVATE di GitHub.
- * Untuk produksi yang lebih baik, data ini sebaiknya dimuat melalui API backend
- * agar tidak terbundel ke dalam file JavaScript yang dapat diakses publik.
- *
- * Untuk update daftar pegawai, cukup edit array ini.
+ * Manajemen Master Data Pegawai Inspektorat Kabupaten Trenggalek.
+ * Berbasis data resmi docs/data-pegawai.csv
  */
+import initialEmployees from "./employees.json"
 
-export const EMPLOYEE_LIST = [
-    "Ir. WIJIONO, ST,M.Mkes", "SIGIT PRASETYO,S.IP.MAP", "SUYATNO,SH", "DIDIK AGIT W, SE.MAP", "NUGRAHENI RAHAYU S, SE,M.Si",
-    "DIDIK SUPRIYANTO,S.Sos.M.Si", "EKO DARMINTO,SE.M.Si", "Ir. AGUNG SRIYONO", "DJOKO PURNOMO,SE", "AGUNG YUDYANA, S.H., M.H.",
-    "DWI SUCI RAHAYU, SE.", "Ir. BENNO HERA T.", "TOTOK SUBIANTO, SE", "BASORI, ST", "RIKE ARSHINTA MAYASARI,  ST,M.A.P",
-    "WINDU SETIYADI, ST", "NIKEN SRI PALUPI,SE", "HAPPY RAHMAWATI,SE", "ENI SUMAWATI, SE", "UTARI PRASETYANI,SE",
-    "FENY RATNAWATI,SE", "UMROTUL MAHFUDHOH,  S.Ak.", "SIGIH SETIONO,  S.Ak.", "NANDITO MONLIEV PASSA,S.Kom", "SULIKAH,S.TP.,M.A.P",
-    "PUSPANAGARI PUTRI RIDANTI,S.Ak", "CHOIRUNNISA,S.A.", "FEREN FEBRIYANTI,S.Ak", "ANANDA SEPTA WILLYANDA,S.E.", "ADHI TRIYANTO, S.Tr.I.P",
-    "FERYAL NADA AZIZAH,A.Md.Ak", "NADIAH FIRDAUSSINTA D,A.Md.Ak", "CHRIS TRYANTO MARTA P P,A,Md.Ak", "DESTY AYU SAPUTRI,A.Md.Ak", "MUHAMAD IQBAL MAULIDI,A.Md.Ak",
-    "ABYADH NURUTTIMAMI FR, A.Md.Ak", "ANINDYA FAUZIYAH BASUKI,A.Md.Ak", "ANDIKA PUTRA HARDYANSYAH,A,Md.Ak", "MUHAMMAD IDHAM FIRDAUS,A.Md.Ak", "CAHYA FITRIA ARDIANI, A. Md",
-    "ROEKAN, ST", "SULIS SETYAWATI, SE", "YENI KRISTUTI", "KATIRAN", "KUSNUL KOTIMAH",
-    "HARYADI", "DYAH WIDI MRANANI, SE", "NANANG MARDIANTORO, S.Pd", "NUVENTIN ASNA PUTRI, S.Ak", "PUTRI PATRISIA FERNANDA, S.M.",
-    "IRMALA PRASISTYA CAHYANING P, S.Ak", "KUKUH ARI FIRMANSYAH, S.H", "ZAKIATUL MUFARRIHAH, ST", "ERNI AGUSTINA, S.H.", "INDAH NABILLA HASNA, S.T.",
-    "DIAH AJENG MELIASARI, S.H", "MOH. MUHADHIR SYAFAAT, S.T.", "KARTIKA KUSUMA DEWI, S.E.", "AJI SURYA SAKSAMA, S.T", "MELA ENDRIANI, S.E.",
-    "YOPI ADI PRAYOGA, S.T.", "DEVI SELVIA, S.E.", "MUHAMMAD ADITYA K, S.E", "RORO PUTRI SETIANINGAYU,S.Tr.E", "TOMMY KURNIAWAN, S.E",
-    "FELLIS ENRICHA PUTRI, S.Ak.", "FRYZA RACHMANIA M, A.Md.Kom", "HARMINTO", "SUPRIYADI", "APRILIYAN SUSANTO"
-].sort()
+const STORAGE_KEY = "simtik_employees"
+
+export const DEPARTMENT_LIST = [
+    "SEKRETARIAT",
+    "INSPEKTUR PEMBANTU I",
+    "INSPEKTUR PEMBANTU II",
+    "INSPEKTUR PEMBANTU III",
+    "INSPEKTUR PEMBANTU IV",
+    "plt IRBAN IV / INSPEKTUR PEMBANTU IV",
+    "IRBAN II",
+    "IRBAN III",
+    "IRBAN KHUSUS / INVESTIGASI",
+    "KEPALA SUB BAGIAN UMUM DAN KEPEGAWAIAN"
+]
+
+export const GOLONGAN_LIST = [
+    "IV/c", "IV/b", "IV/a",
+    "III/d", "III/c", "III/b", "III/a",
+    "II/d", "II/c", "II/b", "II/a",
+    "I"
+]
+
+/**
+ * Mengambil seluruh data pegawai dari localStorage atau initial data
+ */
+export function getEmployees() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+            const parsed = JSON.parse(stored)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed
+            }
+        }
+    } catch (e) {
+        console.error("Gagal membaca pegawai dari storage:", e)
+    }
+    // Simpan data awal jika belum ada
+    saveEmployees(initialEmployees)
+    return initialEmployees
+}
+
+/**
+ * Menyimpan data pegawai ke localStorage
+ */
+export function saveEmployees(employees) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(employees))
+        // Dispatch storage event untuk sinkronisasi antar komponen
+        window.dispatchEvent(new Event("storage"))
+    } catch (e) {
+        console.error("Gagal menyimpan pegawai ke storage:", e)
+    }
+}
+
+/**
+ * Mengambil data 1 pegawai berdasarkan ID
+ */
+export function getEmployeeById(id) {
+    const list = getEmployees()
+    return list.find(emp => String(emp.id) === String(id)) || null
+}
+
+/**
+ * Mengambil data 1 pegawai berdasarkan NIP
+ */
+export function getEmployeeByNip(nip) {
+    const list = getEmployees()
+    return list.find(emp => String(emp.nip) === String(nip)) || null
+}
+
+/**
+ * Menambah pegawai baru (Create)
+ */
+export async function addEmployee(employeeData) {
+    const list = getEmployees()
+    
+    // Validasi NIP unik
+    if (employeeData.nip && employeeData.nip !== "-") {
+        const exists = list.some(emp => emp.nip === employeeData.nip)
+        if (exists) {
+            throw new Error(`Pegawai dengan NIP ${employeeData.nip} sudah terdaftar.`)
+        }
+    }
+
+    const newId = Date.now()
+    const newEmployee = {
+        id: newId,
+        no: list.length + 1,
+        name: employeeData.name.trim(),
+        nameWithoutDegree: employeeData.nameWithoutDegree ? employeeData.nameWithoutDegree.trim() : employeeData.name.trim(),
+        nip: employeeData.nip ? employeeData.nip.trim() : "-",
+        phone: employeeData.phone ? employeeData.phone.trim() : "-",
+        birthPlace: employeeData.birthPlace ? employeeData.birthPlace.trim() : "-",
+        birthDate: employeeData.birthDate ? employeeData.birthDate.trim() : "-",
+        rank: employeeData.rank ? employeeData.rank.trim() : "-",
+        department: employeeData.department ? employeeData.department.trim() : "SEKRETARIAT",
+        classGrade: employeeData.classGrade ? employeeData.classGrade.trim() : "-",
+        position: employeeData.position ? employeeData.position.trim() : "-",
+        email: employeeData.email ? employeeData.email.trim() : "-"
+    }
+
+    const updatedList = [newEmployee, ...list]
+    saveEmployees(updatedList)
+
+    // Coba kirim ke Backend API jika aktif
+    try {
+        await fetch("/api/employees", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newEmployee)
+        })
+    } catch (err) {
+        console.warn("Backend API tidak merespons, data tersimpan lokal:", err)
+    }
+
+    return newEmployee
+}
+
+/**
+ * Memperbarui data pegawai (Update)
+ */
+export async function updateEmployee(id, updatedData) {
+    const list = getEmployees()
+    const index = list.findIndex(emp => String(emp.id) === String(id))
+    
+    if (index === -1) {
+        throw new Error("Data pegawai tidak ditemukan.")
+    }
+
+    const updated = {
+        ...list[index],
+        ...updatedData,
+        id: list[index].id,
+        no: list[index].no
+    }
+
+    list[index] = updated
+    saveEmployees(list)
+
+    // Coba sinkronisasi ke Backend API jika aktif
+    try {
+        await fetch(`/api/employees/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updated)
+        })
+    } catch (err) {
+        console.warn("Backend API tidak merespons, data diperbarui lokal:", err)
+    }
+
+    return updated
+}
+
+/**
+ * Menghapus data pegawai (Delete)
+ */
+export async function deleteEmployee(id) {
+    const list = getEmployees()
+    const target = list.find(emp => String(emp.id) === String(id))
+    
+    if (!target) {
+        throw new Error("Data pegawai tidak ditemukan.")
+    }
+
+    const filtered = list.filter(emp => String(emp.id) !== String(id))
+    saveEmployees(filtered)
+
+    // Coba hapus di Backend API jika aktif
+    try {
+        await fetch(`/api/employees/${id}`, {
+            method: "DELETE"
+        })
+    } catch (err) {
+        console.warn("Backend API tidak merespons, data dihapus lokal:", err)
+    }
+
+    return target
+}
+
+/**
+ * Ekspor EMPLOYEE_LIST untuk backward compatibility
+ */
+export const EMPLOYEE_LIST = getEmployees()

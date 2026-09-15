@@ -217,8 +217,8 @@ const StockForm = ({ initialData, onCancel, onSubmit, type = 'incoming', existin
                             required
                         />
                         <datalist id="taker-list">
-                            {TAKER_LIST.map((name, i) => (
-                                <option key={i} value={name} />
+                            {TAKER_LIST.map((emp, i) => (
+                                <option key={i} value={typeof emp === 'object' ? emp.name : emp} />
                             ))}
                         </datalist>
                     </div>
