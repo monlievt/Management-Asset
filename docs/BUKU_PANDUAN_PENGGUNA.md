@@ -58,6 +58,17 @@
     - 12.1 Ekspor Spreadsheet Excel / CSV (UTF-8 BOM)
     - 12.2 Prosedur Pembaruan & Deployment di Virtualmin/Webmin
 15. [Bab 13: Modul Manajemen Data Pegawai (CRUD ASN)](#bab-13-modul-manajemen-data-pegawai-crud-asn)
+    - 13.1 Tampilan Master Data Pegawai
+    - 13.2 Penambahan Pegawai Baru
+    - 13.3 Pembaruan Data Pegawai
+    - 13.4 Proteksi Hapus Pegawai & Integritas Aset
+    - 13.5 Ekspor Data Pegawai ke Excel/CSV
+16. [Bab 14: Pusat Data Master Sistem & Editor Unit Kerja](#bab-14-pusat-data-master-sistem--editor-unit-kerja)
+    - 14.1 Lokasi & Akses Editor Unit Kerja
+    - 14.2 Kelola Unit Kerja / Bidang (CRUD & Auto-Cascade)
+    - 14.3 Kelola Master Ruangan Dinas (KIR Permendagri 47/2021)
+    - 14.4 Kelola Kategori Aset TIK
+    - 14.5 Konfigurasi Pejabat Penandatangan Dokumen & Kop Surat Resmi
     - 13.1 Master Data 70 Pegawai Inspektorat (PNS & PPPK)
     - 13.2 Tambah Pegawai Baru (Create)
     - 13.3 Pembaruan Data Pegawai (Update)
@@ -479,6 +490,49 @@ Modul ini mengelola master data aparatur sipil negara (ASN) dan staf pada Inspek
 
 ---
 
+## BAB 14: PUSAT DATA MASTER SISTEM & EDITOR UNIT KERJA
+
+Untuk memastikan kerapian, konsistensi data, dan kepatuhan terhadap regulasi tata kelola barang milik daerah (BMD), SIM-TIK v2.4 Enterprise menyediakan **Pusat Data Master Sistem (Master Data Hub)** yang memusatkan seluruh konfigurasi referensi organisasi dalam satu panel kendali terpadu.
+
+### 14.1 Lokasi & Akses Editor Unit Kerja
+Pengguna dengan peran **Superadmin**, **Admin TIK**, atau **Pengurus Barang** dapat mengakses editor referensi melalui dua jalur:
+1. **Shortcut Langsung dari Halaman Pegawai**:
+   - Buka menu **Manajemen Pegawai** (`/employees`).
+   - Klik tombol **"Kelola Unit Kerja"** pada bilah aksi bagian atas.
+   - Sistem akan langsung mengarahkan Anda ke tab Data Master dengan sub-tab Unit Kerja aktif (`/settings?tab=master&sub=departments`).
+2. **Melalui Menu Pengaturan Akun & Sistem**:
+   - Buka menu **Pengaturan** (`/settings`).
+   - Pilih tab **"Data Master Sistem"** pada menu navigasi samping.
+
+### 14.2 Kelola Unit Kerja / Bidang (CRUD & Auto-Cascade)
+Modul ini digunakan untuk menambah, mengubah, atau menghapus struktur divisi/bidang kerja pada Inspektorat (misal: Sekretariat, Irban I s/d V, Irban Investigasi Khusus):
+- **Tambah Unit Kerja Baru**: Klik **"Tambah Unit Kerja"**, masukkan Nama Unit Kerja, Kode Singkatan (misal: `IRBAN V`), dan Deskripsi Tugas.
+- **Auto-Cascade Sinkronisasi**: Jika nama unit kerja diubah (misal: perubahan nomenklatur), sistem secara otomatis memperbarui (*cascade update*) nama bidang pada seluruh data pegawai yang terdaftar pada unit kerja tersebut tanpa perlu mengedit pegawai satu per satu.
+- **Proteksi Hapus Berelasi**: Unit kerja yang masih memiliki pegawai aktif di dalamnya dilindungi dari penghapusan tidak disengaja. Pengguna harus memutasikan pegawai terkait terlebih dahulu.
+
+### 14.3 Kelola Master Ruangan Dinas (KIR Permendagri No. 47/2021)
+Modul ini mengelola master data fisik ruangan kantor beserta penanggung jawab ruangan (PIC):
+- Mengisi Kode Ruangan, Nama Ruangan, Lokasi Lantai gedung, serta memilih Nama & NIP Penanggung Jawab Ruangan langsung dari daftar pegawai dinas.
+- Dilengkapi **proteksi penghapusan ruangan**: Ruangan yang tercatat masih ditempati aset inventaris tidak dapat dihapus sembarangan.
+- Data ruangan ini terhubung langsung dengan modul **Kartu Inventaris Ruangan (KIR)** dan lembar cetak fisik Permendagri 47/2021.
+
+### 14.4 Kelola Kategori Aset TIK
+Modul ini mengelola klasifikasi kelompok inventaris TIK (misal: *Laptop & Komputer PC*, *Server & Jaringan Data*, *Printer, Scanner & Peripheral*, *Perangkat Display & Multimedia*, dsb.):
+- Memudahkan standarisasi penamaan barang pada modul Inventaris Aset dan KIB B.
+- Setiap penambahan kategori baru langsung muncul pada dropdown pendaftaran aset.
+
+### 14.5 Konfigurasi Pejabat Penandatangan Dokumen Resmi & Kop Surat Instansi
+Untuk menjamin keabsahan hukum dokumen yang diterbitkan oleh sistem:
+- **Pejabat Penandatangan**:
+  - **Kepala SKPD / Inspektur**: Mengetahui/Mengesahkan seluruh BAST dan laporan rekapitulasi inventaris dinas.
+  - **Pengurus Barang Pengguna**: Pihak Pertama yang menyerahkan barang pada BAST dan mengesahkan KIR Ruangan.
+  - **Kasubbag Umum & Keuangan**: Verifikator administrasi inventaris dan logistik kantor.
+- **Format Kop Surat Resmi**:
+  - Mengatur Nama Pemerintah Daerah (*PEMERINTAH KABUPATEN TRENGGALEK*), Nama SKPD (*INSPEKTORAT DAERAH*), Alamat Kantor, Nomor Telepon, dan Email Kedinasan.
+- **Otomatisasi Cetak Dokumen**: Setiap kali dokumen resmi (BAST Serah Terima Aset, KIR Ruangan, Laporan Helpdesk) dicetak, sistem secara dinamis menyematkan kop dan nama pejabat penandatangan terbaru yang telah disimpan di modul ini.
+
+---
+
 ## KESIMPULAN & DUKUNGAN TEKNIS
-Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, master data kepegawaian ASN terpadu, serta kenyamanan antarmuka modern ramah mata (*consistent dark mode*). Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
+Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, master data kepegawaian ASN terpadu, serta fleksibilitas pusat data master yang dinamis. Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
 

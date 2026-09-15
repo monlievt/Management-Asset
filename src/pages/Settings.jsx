@@ -1,20 +1,39 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
 import { Button } from "../components/ui/Button"
 import { updateUserPasswordHash, getUserByEmail } from "../data/users"
 import { hashPassword, verifyPassword } from "../lib/crypto"
 import { Input } from "../components/ui/Input"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/Card"
-import { User, Lock, Eye, EyeOff } from "lucide-react"
+import { User, Lock, Eye, EyeOff, Database } from "lucide-react"
 import { cn } from "../lib/utils"
 import { useUser } from "../context/UserContext"
+import { usePermission } from "../lib/rbac"
+import { MasterDataSettings } from "../components/settings/MasterDataSettings"
 
 export default function Settings() {
     const { user, updateUser } = useUser()
-    const [activeTab, setActiveTab] = useState("profile")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const canManageMaster = usePermission("settings.edit")
+
+    const tabParam = searchParams.get("tab")
+    const subParam = searchParams.get("sub") || "departments"
+
+    const [activeTab, setActiveTab] = useState(
+        tabParam === "master" && canManageMaster ? "master" : (tabParam || "profile")
+    )
     const [displayName, setDisplayName] = useState(user.name)
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+    useEffect(() => {
+        if (tabParam === "master" && canManageMaster) {
+            setActiveTab("master")
+        } else if (tabParam && tabParam !== "master") {
+            setActiveTab(tabParam)
+        }
+    }, [tabParam, canManageMaster])
 
     // Password Update State
     const [currentPassword, setCurrentPassword] = useState("")
@@ -74,37 +93,51 @@ export default function Settings() {
     const tabs = [
         { id: "profile", label: "Profil Pengguna", icon: User },
         { id: "security", label: "Keamanan & Kata Sandi", icon: Lock },
+        ...(canManageMaster ? [{ id: "master", label: "Data Master Sistem", icon: Database }] : [])
     ]
 
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">Pengaturan Akun</h2>
-                <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">Kelola identitas profil, email, dan keamanan akses kata sandi SIM-TIK.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">
+                    {activeTab === "master" ? "Pusat Data Master Sistem" : "Pengaturan Akun"}
+                </h2>
+                <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">
+                    {activeTab === "master"
+                        ? "Kelola data referensi Unit Kerja, Master Ruangan Dinas (KIR), Kategori Aset, dan Pejabat Penandatangan Dokumen."
+                        : "Kelola identitas profil, email, dan keamanan akses kata sandi SIM-TIK."}
+                </p>
             </div>
 
-            <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-                <aside className="-mx-4 lg:w-1/5">
+            <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-8 lg:space-y-0">
+                <aside className="-mx-4 lg:w-56 shrink-0">
                     <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={() => {
+                                    setActiveTab(tab.id)
+                                    if (tab.id === "master") {
+                                        setSearchParams({ tab: "master", sub: subParam })
+                                    } else {
+                                        setSearchParams({ tab: tab.id })
+                                    }
+                                }}
                                 className={cn(
-                                    "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                                    "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-left",
                                     activeTab === tab.id
-                                        ? "bg-secondary-100 text-primary-600 dark:bg-secondary-800 dark:text-primary-400 font-semibold"
+                                        ? "bg-secondary-100 text-primary-600 dark:bg-secondary-800 dark:text-primary-400 font-semibold shadow-xs"
                                         : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-800/60 hover:text-secondary-900 dark:hover:text-white"
                                 )}
                             >
-                                <tab.icon className="mr-2.5 h-4 w-4" />
+                                <tab.icon className="mr-2.5 h-4 w-4 shrink-0" />
                                 {tab.label}
                             </button>
                         ))}
                     </nav>
                 </aside>
 
-                <div className="flex-1 lg:max-w-2xl">
+                <div className={cn("flex-1 min-w-0", activeTab === "master" ? "w-full" : "lg:max-w-2xl")}>
                     {activeTab === "profile" && (
                         <Card>
                             <CardHeader>
@@ -219,7 +252,9 @@ export default function Settings() {
                         </Card>
                     )}
 
-
+                    {activeTab === "master" && canManageMaster && (
+                        <MasterDataSettings initialSubTab={subParam} />
+                    )}
                 </div>
             </div>
         </div>

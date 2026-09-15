@@ -174,11 +174,24 @@
 
 ---
 
+### MODUL 17: PUSAT DATA MASTER SISTEM (MASTER DATA HUB)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-MST-01** | Shortcut Editor Unit Kerja dari Pegawai | Buka halaman `/employees` dan klik tombol **"Kelola Unit Kerja"** di toolbar atas. | Sistem langsung mengarahkan pengguna ke tab **Data Master Sistem** dengan sub-tab **Unit Kerja / Bidang** aktif (`/settings?tab=master&sub=departments`). | **PASS** |
+| **TC-MST-02** | Tambah Unit Kerja Baru (Create) | Di sub-tab Unit Kerja, klik **"Tambah Unit Kerja"**, isi Nama Unit Kerja, Kode, dan Deskripsi, lalu simpan. | Unit kerja baru langsung tersimpan, muncul pada tabel, dan otomatis tersedia pada dropdown filter & form pegawai. | **PASS** |
+| **TC-MST-03** | Ubah Nomenklatur & Auto-Cascade | Ubah nama salah satu unit kerja (misal: "IRBAN I" menjadi "INSPEKTUR PEMBANTU WILAYAH I"). | Sistem memperbarui nama unit kerja dan otomatis meng-cascade perubahan ke seluruh pegawai yang bernaung di bawah unit kerja tersebut. | **PASS** |
+| **TC-MST-04** | Proteksi Hapus Unit Kerja Berelasi | Coba hapus unit kerja yang masih memiliki pegawai di dalamnya. | Muncul modal peringatan yang mengunci tindakan penghapusan hingga pegawai di dalamnya dimutasikan terlebih dahulu. | **PASS** |
+| **TC-MST-05** | Master Ruangan Dinas (KIR Permendagri 47) | Tambah/ubah master ruangan kantor beserta penanggung jawab ruangan (PIC & NIP). | Data ruangan tersimpan dan otomatis tersinkronisasi ke modul Kartu Inventaris Ruangan (KIR) dan lembar cetak A4 landscape. | **PASS** |
+| **TC-MST-06** | Konfigurasi Pejabat Penandatangan & Kop | Masukkan nama & NIP Inspektur (Kepala SKPD), Pengurus Barang Pengguna, Kasubbag Umum, serta detail Kop Dinas. | Dokumen resmi BAST dan Lembar KIR Ruangan langsung memuat nama penandatangan dan kop instansi yang baru secara dinamis. | **PASS** |
+
+---
+
 ## 3. LEMBAR REKAPITULASI HASIL PENGUJIAN (TEST SUMMARY)
 
-- **Total Modul Diuji**: 16 Modul Sistem
-- **Total Kasus Uji (Test Cases)**: 50 Kasus Uji
-- **Jumlah Kasus Lolos (Passed)**: 50 Kasus Uji (100%)
+- **Total Modul Diuji**: 17 Modul Sistem
+- **Total Kasus Uji (Test Cases)**: 56 Kasus Uji
+- **Jumlah Kasus Lolos (Passed)**: 56 Kasus Uji (100%)
 - **Jumlah Kasus Gagal (Failed)**: 0 Kasus Uji (0%)
 - **Jumlah Catatan Kritis (Blockers)**: 0 Isu
 
@@ -187,9 +200,10 @@ Aplikasi **SIM-TIK v2.4 Enterprise (Fullstack Architecture)** telah memenuhi sel
 1. Kepatuhan hukum penatausahaan BMD pemerintah (Permendagri No. 47 Tahun 2021 & PSAP No. 07).
 2. Kesiapan audit forensik pengawasan intern (**APIP & BPK**) dengan rekaman *immutable audit trail*.
 3. Manajemen master data 70 Pegawai ASN Inspektorat Kabupaten Trenggalek (CRUD lengkap, proteksi integritas pemegang aset, dan ekspor spreadsheet).
-4. Pelacakan anggaran belanja modal APBD (±Rp 10 Miliar) berbasis DPA, SP2D, dan nomor kontrak.
-5. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
-6. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
+4. Pusat Data Master Sistem terpusat (Editor Unit Kerja dengan auto-cascade, Master Ruangan KIR, Kategori Aset TIK, dan Pejabat Penandatangan Dokumen Resmi).
+5. Pelacakan anggaran belanja modal APBD (±Rp 10 Miliar) berbasis DPA, SP2D, dan nomor kontrak.
+6. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
+7. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
 
 **REKOMENDASI: SISTEM DINYATAKAN SANGAT LAYAK, AMAN, DAN SIAP DIGUNAKAN PENUH DI LINGKUNGAN INSPEKTORAT KABUPATEN TRENGGALEK.**
 

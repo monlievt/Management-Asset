@@ -19,6 +19,7 @@ import employeeRoutes from './routes/employeeRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -75,6 +76,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/departments', departmentRoutes);
 app.use('/api/audit-logs', auditRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);

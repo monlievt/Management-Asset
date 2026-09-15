@@ -2,14 +2,17 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { Printer, ArrowLeft, ShieldCheck } from "lucide-react"
 import { getAssetById } from "../data/assetsStore"
+import { getSigners } from "../data/masterDataStore"
 
 export default function BastPrintView() {
     const { assetId, custodyId } = useParams()
     const navigate = useNavigate()
     const [asset, setAsset] = useState(null)
     const [custody, setCustody] = useState(null)
+    const [signers, setSigners] = useState(() => getSigners())
 
     useEffect(() => {
+        setSigners(getSigners())
         const foundAsset = getAssetById(assetId)
         if (foundAsset) {
             setAsset(foundAsset)
@@ -65,13 +68,13 @@ export default function BastPrintView() {
                 {/* Kop Dokumen Resmi */}
                 <div className="text-center border-b-4 border-double border-black pb-4 mb-6">
                     <h3 className="text-sm font-bold tracking-wider uppercase m-0">
-                        PEMERINTAH REPUBLIK INDONESIA
+                        {signers?.kop?.governmentName || "PEMERINTAH KABUPATEN TRENGGALEK"}
                     </h3>
                     <h2 className="text-lg font-black tracking-wide uppercase mt-1 mb-0">
-                        DINAS KOMUNIKASI, INFORMATIKA, STATISTIK DAN PERSANDIAN
+                        {signers?.kop?.agencyName || "INSPEKTORAT DAERAH"}
                     </h2>
                     <p className="text-xs text-gray-700 mt-1 mb-0">
-                        Sistem Informasi Manajemen Aset & Logistik TIK (SIM-TIK)
+                        {signers?.kop?.address || "Jl. Brigjen Soetran No. 9, Trenggalek"} {signers?.kop?.phone ? `| Telp: ${signers?.kop?.phone}` : ""}
                     </p>
                 </div>
 
@@ -87,16 +90,18 @@ export default function BastPrintView() {
 
                 {/* Pembukaan Surat */}
                 <p className="text-xs leading-relaxed text-justify mb-4">
-                    Pada hari ini, tanggal <strong>{todayDateFormatted}</strong>, bertempat di Kantor Dinas Komunikasi, Informatika, Statistik dan Persandian, kami yang bertanda tangan di bawah ini:
+                    Pada hari ini, tanggal <strong>{todayDateFormatted}</strong>, bertempat di Kantor {signers?.kop?.agencyName || "Inspektorat Daerah"}, kami yang bertanda tangan di bawah ini:
                 </p>
 
                 {/* Pihak Pertama & Kedua */}
                 <div className="space-y-3 mb-5 text-xs">
                     <div className="grid grid-cols-12 gap-2">
                         <div className="col-span-3 font-semibold">1. Nama Petugas</div>
-                        <div className="col-span-9">: <strong>PENGELOLA ASET & LOGISTIK TIK</strong></div>
+                        <div className="col-span-9">: <strong>{signers?.pengurus_barang?.name || "ARIS WIDODO, S.Kom"}</strong></div>
                         <div className="col-span-3 font-semibold">   Jabatan</div>
-                        <div className="col-span-9">: Petugas Pengelola Barang Milik Daerah (BMD) TIK</div>
+                        <div className="col-span-9">: {signers?.pengurus_barang?.title || "Pengurus Barang Pengguna"}</div>
+                        <div className="col-span-3 font-semibold">   NIP</div>
+                        <div className="col-span-9">: {signers?.pengurus_barang?.nip || "198506142009021004"}</div>
                         <div className="col-span-12 italic text-gray-600 pl-4">
                             Selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong> (Yang Menyerahkan).
                         </div>
@@ -173,8 +178,9 @@ export default function BastPrintView() {
                         <div className="h-20 flex items-center justify-center text-gray-300 italic">
                             ( Tanda Tangan / Paraf )
                         </div>
-                        <p className="font-bold underline uppercase">PENGELOLA ASET TIK</p>
-                        <p className="text-[11px] text-gray-600">NIP. 198506142009021004</p>
+                        <p className="font-bold underline uppercase">{signers?.pengurus_barang?.name || "ARIS WIDODO, S.Kom"}</p>
+                        <p className="text-[11px] text-gray-600">NIP. {signers?.pengurus_barang?.nip || "198506142009021004"}</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{signers?.pengurus_barang?.title || "Pengurus Barang Pengguna"}</p>
                     </div>
 
                     <div>
@@ -185,18 +191,22 @@ export default function BastPrintView() {
                         </div>
                         <p className="font-bold underline uppercase">{custody.employeeName}</p>
                         <p className="text-[11px] text-gray-600">NIP. {custody.nip || "......................................."}</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{custody.position || custody.department || "Penerima Manfaat"}</p>
                     </div>
                 </div>
 
                 {/* Mengetahui Pejabat Berwenang */}
                 <div className="text-center text-xs mt-8 pt-4">
                     <p className="mb-1">Mengetahui,</p>
-                    <p className="font-bold uppercase">Kepala Bidang Aplikasi & Informatika</p>
+                    <p className="font-bold uppercase">{signers?.kepala_skpd?.title || "Inspektur Kabupaten Trenggalek"}</p>
                     <div className="h-16 flex items-center justify-center text-gray-300 italic">
                         ( Cap Dinas & Tanda Tangan )
                     </div>
-                    <p className="font-bold underline uppercase">Ir. WIJIONO, ST, M.Mkes</p>
-                    <p className="text-[11px] text-gray-600">NIP. 197505122000031002</p>
+                    <p className="font-bold underline uppercase">{signers?.kepala_skpd?.name || "Drs. EKO SUSANTO, M.Si"}</p>
+                    <p className="text-[11px] text-gray-600">NIP. {signers?.kepala_skpd?.nip || "196805121994031005"}</p>
+                    {signers?.kepala_skpd?.rank && (
+                        <p className="text-[10px] text-gray-500">{signers.kepala_skpd.rank}</p>
+                    )}
                 </div>
             </div>
         </div>

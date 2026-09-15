@@ -19,6 +19,88 @@ router.get('/', (req, res) => {
 });
 
 /**
+ * POST /api/rooms
+ * Tambah Master Ruangan Baru
+ */
+router.post('/', (req, res) => {
+    try {
+        const { id, name, pic_name, pic_nip, floor } = req.body;
+        if (!name || name.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Nama ruangan wajib diisi.' });
+        }
+
+        const roomId = id ? id.trim().toUpperCase() : `R-${Date.now().toString().slice(-3)}`;
+
+        db.prepare(`
+            INSERT INTO rooms (id, name, pic_name, pic_nip, floor)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                name = excluded.name,
+                pic_name = excluded.pic_name,
+                pic_nip = excluded.pic_nip,
+                floor = excluded.floor
+        `).run(roomId, name.trim(), pic_name ? pic_name.trim() : 'PENANGGUNG JAWAB', pic_nip || '-', floor || 'Lantai 1');
+
+        return res.status(201).json({ success: true, message: 'Ruangan berhasil disimpan.', data: { id: roomId, name, pic_name, pic_nip, floor } });
+    } catch (err) {
+        console.error('[POST_ROOM_ERROR]', err);
+        return res.status(500).json({ success: false, message: 'Gagal menambah ruangan: ' + err.message });
+    }
+});
+
+/**
+ * PUT /api/rooms/:id
+ * Ubah Master Ruangan
+ */
+router.put('/:id', (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, pic_name, pic_nip, floor } = req.body;
+
+        db.prepare(`
+            UPDATE rooms SET
+                name = COALESCE(?, name),
+                pic_name = COALESCE(?, pic_name),
+                pic_nip = COALESCE(?, pic_nip),
+                floor = COALESCE(?, floor)
+            WHERE id = ?
+        `).run(name ? name.trim() : null, pic_name ? pic_name.trim() : null, pic_nip ? pic_nip.trim() : null, floor || null, id);
+
+        return res.json({ success: true, message: 'Ruangan berhasil diperbarui.' });
+    } catch (err) {
+        console.error('[PUT_ROOM_ERROR]', err);
+        return res.status(500).json({ success: false, message: 'Gagal memperbarui ruangan.' });
+    }
+});
+
+/**
+ * DELETE /api/rooms/:id
+ * Hapus Master Ruangan
+ */
+router.delete('/:id', (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = db.prepare('SELECT name FROM rooms WHERE id = ?').get(id);
+
+        if (room) {
+            const count = db.prepare('SELECT COUNT(*) as c FROM assets WHERE lokasi = ?').get(room.name).c;
+            if (count > 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Tidak dapat menghapus. Masih ada ${count} aset di ${room.name}.`
+                });
+            }
+        }
+
+        db.prepare('DELETE FROM rooms WHERE id = ?').run(id);
+        return res.json({ success: true, message: 'Ruangan berhasil dihapus.' });
+    } catch (err) {
+        console.error('[DEL_ROOM_ERROR]', err);
+        return res.status(500).json({ success: false, message: 'Gagal menghapus ruangan.' });
+    }
+});
+
+/**
  * GET /api/rooms/:name/assets
  * Mengambil daftar aset yang ditempatkan di ruangan tertentu untuk lembar cetak KIR
  */

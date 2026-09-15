@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import {
     Users, Plus, Search, Edit3, Trash2, Download,
     Shield, Briefcase, Phone, Mail, Award, CheckCircle2,
@@ -8,6 +9,7 @@ import {
     getEmployees, addEmployee, updateEmployee, deleteEmployee,
     DEPARTMENT_LIST, GOLONGAN_LIST
 } from "../data/employees"
+import { getDepartments } from "../data/masterDataStore"
 import { getAssets } from "../data/assetsStore"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
@@ -18,7 +20,9 @@ import { Modal } from "../components/ui/Modal"
 import { CanDo } from "../lib/rbac"
 
 export default function Employees() {
+    const navigate = useNavigate()
     const [employees, setEmployees] = useState([])
+    const [departments, setDepartments] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedDept, setSelectedDept] = useState("all")
     const [isLoading, setIsLoading] = useState(false)
@@ -47,12 +51,13 @@ export default function Employees() {
     const [formData, setFormData] = useState(initialFormState)
     const [formError, setFormError] = useState("")
 
-    // Muat data pegawai
+    // Muat data pegawai & unit kerja
     const loadEmployeesData = () => {
         setIsLoading(true)
         try {
             const data = getEmployees()
             setEmployees(data)
+            setDepartments(getDepartments())
         } catch (err) {
             console.error("Gagal memuat data pegawai:", err)
         } finally {
@@ -229,6 +234,17 @@ export default function Employees() {
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
+                    <CanDo permission="settings.edit">
+                        <Button
+                            variant="outline"
+                            onClick={() => navigate("/settings?tab=master&sub=departments")}
+                            className="flex items-center gap-2 text-secondary-700 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400"
+                            title="Buka Pusat Editor Unit Kerja & Bidang"
+                        >
+                            <Building2 className="h-4 w-4" />
+                            Kelola Unit Kerja
+                        </Button>
+                    </CanDo>
                     <Button
                         variant="outline"
                         onClick={handleExportCSV}
@@ -333,13 +349,23 @@ export default function Employees() {
                             onChange={(e) => setSelectedDept(e.target.value)}
                             className="h-10 px-3 rounded-md border border-secondary-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white text-xs focus:ring-2 focus:ring-primary-500 focus:outline-none"
                         >
-                            <option value="all">Semua Bidang / Seksi</option>
-                            <option value="SEKRETARIAT">Sekretariat</option>
-                            <option value="IRBAN I">Irban Wilayah I</option>
-                            <option value="IRBAN II">Irban Wilayah II</option>
-                            <option value="IRBAN III">Irban Wilayah III</option>
-                            <option value="IRBAN IV">Irban Wilayah IV</option>
-                            <option value="KHUSUS">Irban Khusus / Investigasi</option>
+                            <option value="all">Semua Bidang / Unit Kerja</option>
+                            {departments.length > 0 ? (
+                                departments.map((dept) => (
+                                    <option key={dept.id || dept.code || dept.name} value={dept.name}>
+                                        {dept.name}
+                                    </option>
+                                ))
+                            ) : (
+                                <>
+                                    <option value="SEKRETARIAT">Sekretariat</option>
+                                    <option value="IRBAN I">Irban Wilayah I</option>
+                                    <option value="IRBAN II">Irban Wilayah II</option>
+                                    <option value="IRBAN III">Irban Wilayah III</option>
+                                    <option value="IRBAN IV">Irban Wilayah IV</option>
+                                    <option value="KHUSUS">Irban Khusus / Investigasi</option>
+                                </>
+                            )}
                         </select>
                     </div>
                 </CardHeader>
@@ -510,9 +536,17 @@ export default function Employees() {
                                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                                 className="flex h-10 w-full rounded-md border border-secondary-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                             >
-                                {DEPARTMENT_LIST.map((dept) => (
-                                    <option key={dept} value={dept}>{dept}</option>
-                                ))}
+                                {departments.length > 0 ? (
+                                    departments.map((dept) => (
+                                        <option key={dept.id || dept.code || dept.name} value={dept.name}>
+                                            {dept.name} {dept.code ? `(${dept.code})` : ""}
+                                        </option>
+                                    ))
+                                ) : (
+                                    DEPARTMENT_LIST.map((dept) => (
+                                        <option key={dept} value={dept}>{dept}</option>
+                                    ))
+                                )}
                             </select>
                         </div>
 

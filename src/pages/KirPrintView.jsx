@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { Printer, ArrowLeft, Building2 } from "lucide-react"
 import { getAssets, getRooms, calculateDepreciation } from "../data/assetsStore"
+import { getSigners } from "../data/masterDataStore"
 
 export default function KirPrintView() {
     const { roomName } = useParams()
@@ -9,10 +10,12 @@ export default function KirPrintView() {
     const decodedRoomName = decodeURIComponent(roomName || "")
     const navigate = useNavigate()
 
+    const [signers, setSigners] = useState(() => getSigners())
     const [roomInfo, setRoomInfo] = useState(null)
     const [roomAssets, setRoomAssets] = useState([])
 
     useEffect(() => {
+        setSigners(getSigners())
         const rooms = getRooms()
         const foundRoom = rooms.find(r => r.name.toLowerCase() === decodedRoomName.toLowerCase()) || {
             name: decodedRoomName || "Seluruh Ruangan",
@@ -68,13 +71,13 @@ export default function KirPrintView() {
                 {/* Kop Surat Dinas */}
                 <div className="text-center border-b-2 border-black pb-3 mb-4">
                     <h3 className="text-xs font-bold uppercase tracking-wider m-0">
-                        PEMERINTAH DAERAH PROVINSI / KABUPATEN / KOTA
+                        {signers?.kop?.governmentName || "PEMERINTAH KABUPATEN TRENGGALEK"}
                     </h3>
                     <h2 className="text-base font-black uppercase tracking-wide mt-0.5 mb-0">
-                        DINAS KOMUNIKASI, INFORMATIKA, STATISTIK DAN PERSANDIAN
+                        {signers?.kop?.agencyName || "INSPEKTORAT DAERAH"}
                     </h2>
                     <p className="text-[10px] text-gray-700 mt-0.5 mb-0">
-                        Sistem Informasi Manajemen Logistik & Penatausahaan Barang Milik Daerah (SIM-TIK)
+                        {signers?.kop?.address || "Jl. Brigjen Soetran No. 9, Trenggalek"} {signers?.kop?.phone ? `| Telp: ${signers?.kop?.phone}` : ""}
                     </p>
                 </div>
 
@@ -175,12 +178,12 @@ export default function KirPrintView() {
                 <div className="grid grid-cols-2 gap-12 text-center text-xs mt-6">
                     <div>
                         <p className="mb-0.5">Mengetahui / Mengesahkan,</p>
-                        <p className="font-bold uppercase">Pengurus Barang Pengguna</p>
+                        <p className="font-bold uppercase">{signers?.pengurus_barang?.title || "Pengurus Barang Pengguna"}</p>
                         <div className="h-16 flex items-center justify-center text-gray-300 italic text-[10px]">
                             ( Tanda Tangan / Paraf )
                         </div>
-                        <p className="font-bold underline uppercase">PENGELOLA ASET & LOGISTIK TIK</p>
-                        <p className="text-[10px] text-gray-600">NIP. 198506142009021004</p>
+                        <p className="font-bold underline uppercase">{signers?.pengurus_barang?.name || "ARIS WIDODO, S.Kom"}</p>
+                        <p className="text-[10px] text-gray-600">NIP. {signers?.pengurus_barang?.nip || "198506142009021004"}</p>
                     </div>
 
                     <div>
