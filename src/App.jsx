@@ -12,7 +12,6 @@ import StockOpname from "./pages/StockOpname"
 import StockHistory from "./pages/StockHistory"
 import NotFound from "./pages/NotFound"
 
-// Halaman Baru Sesuai Permintaan Pengguna (Dedicated Pages, bukan popup)
 import AssetNew from "./pages/AssetNew"
 import AssetEdit from "./pages/AssetEdit"
 import AssetDetailView from "./pages/AssetDetailView"
@@ -20,6 +19,8 @@ import BastPrintView from "./pages/BastPrintView"
 import KirPrintView from "./pages/KirPrintView"
 import AuditTrailView from "./pages/AuditTrailView"
 import Employees from "./pages/Employees"
+import AtkSelfCheckout from "./pages/AtkSelfCheckout"
+import AtkQrPoster from "./pages/AtkQrPoster"
 
 function App() {
   return (
@@ -33,6 +34,11 @@ function App() {
       {/* Rute Cetak Dokumen Resmi (Full Page / Print Friendly) */}
       <Route path="/bast/:assetId/:custodyId" element={<BastPrintView />} />
       <Route path="/kir/:roomName" element={<KirPrintView />} />
+
+      {/* Rute Mandiri Kios / Mobile QR Scan (Standalone Fullscreen) */}
+      <Route path="/atk/ambil" element={<AtkSelfCheckout />} />
+      <Route path="/atk/self-service" element={<AtkSelfCheckout />} />
+      <Route path="/atk/poster-qr" element={<AtkQrPoster />} />
 
       {/* Rute Utama Aplikasi dalam Dashboard Layout */}
       <Route path="/" element={<DashboardLayout />}>
@@ -56,8 +62,11 @@ function App() {
         <Route path="assets/devices/:id" element={<AssetDetailView />} />
         <Route path="assets/devices/:id/edit" element={<AssetEdit />} />
 
-        {/* Modul Stok Opname ATK */}
+        {/* Modul Stok Opname ATK & Kios Mandiri */}
         <Route path="assets/atk" element={<StockOpname />} />
+        <Route path="assets/atk/checkout" element={<AtkSelfCheckout />} />
+        <Route path="assets/atk/self-service" element={<AtkSelfCheckout />} />
+        <Route path="assets/atk/poster-qr" element={<AtkQrPoster />} />
         <Route path="assets/atk/history" element={<StockHistory />} />
 
         {/* Modul Helpdesk, Pegawai, Audit Trail & Pengaturan */}

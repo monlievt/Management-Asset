@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react"
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye, ArrowDown, ArrowUp, History, Printer } from "lucide-react"
+import {
+    Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye,
+    ArrowDown, ArrowUp, History, Printer, ShoppingCart, QrCode, Monitor
+} from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
@@ -8,6 +11,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../components/ui/Badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Modal } from "../components/ui/Modal"
+import {
+    getAtkStocks, saveAtkStocks, getAtkHistory, saveAtkHistory
+} from "../data/atkStore"
 
 // Custom Combobox for Item Selection
 const ItemCombobox = ({ value, onChange, options, onSelect }) => {
@@ -246,22 +252,25 @@ const initialStock = [
 ]
 
 export default function StockOpname() {
-    const [stocks, setStocks] = useState(() => {
-        const saved = localStorage.getItem("simtik_stock_atk")
-        return saved ? JSON.parse(saved) : initialStock
-    })
+    const [stocks, setStocks] = useState(() => getAtkStocks())
+    const [history, setHistory] = useState(() => getAtkHistory())
 
-    const [history, setHistory] = useState(() => {
-        const saved = localStorage.getItem("simtik_stock_atk_history")
-        return saved ? JSON.parse(saved) : []
-    })
+    // Sinkronisasi otomatis jika ada transaksi dari Kios Mandiri / Mobile QR
+    useEffect(() => {
+        const handleStorage = () => {
+            setStocks(getAtkStocks())
+            setHistory(getAtkHistory())
+        }
+        window.addEventListener("storage", handleStorage)
+        return () => window.removeEventListener("storage", handleStorage)
+    }, [])
 
     useEffect(() => {
-        localStorage.setItem("simtik_stock_atk", JSON.stringify(stocks))
+        saveAtkStocks(stocks)
     }, [stocks])
 
     useEffect(() => {
-        localStorage.setItem("simtik_stock_atk_history", JSON.stringify(history))
+        saveAtkHistory(history)
     }, [history])
 
     const [searchTerm, setSearchTerm] = useState("")
@@ -470,8 +479,18 @@ export default function StockOpname() {
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
+                    <Link to="/atk/ambil">
+                        <Button variant="outline" className="text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 font-bold">
+                            <ShoppingCart className="mr-2 h-4 w-4 text-emerald-600" /> Kios Ambil Mandiri
+                        </Button>
+                    </Link>
+                    <Link to="/atk/poster-qr">
+                        <Button variant="outline" className="text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800">
+                            <QrCode className="mr-2 h-4 w-4 text-primary-600" /> Poster QR Ruangan
+                        </Button>
+                    </Link>
                     <Button variant="outline" onClick={printStockReport}>
-                        <Printer className="mr-2 h-4 w-4" /> Cetak Laporan Stok
+                        <Printer className="mr-2 h-4 w-4" /> Cetak Laporan
                     </Button>
                     <Link to="/assets/atk/history">
                         <Button variant="outline">
@@ -484,6 +503,40 @@ export default function StockOpname() {
                     <Button variant="primary" onClick={() => handleOpenModal('incoming')}>
                         <Plus className="mr-2 h-4 w-4" /> Barang Masuk
                     </Button>
+                </div>
+            </div>
+
+            {/* Banner Akses Mandiri Ruangan ATK (Kombinasi Opsi 1-2-3) */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-primary-500/10 to-indigo-500/10 border border-emerald-200 dark:border-emerald-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div className="flex items-start gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                        <ShoppingCart className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-bold text-secondary-900 dark:text-white flex items-center gap-2">
+                            Akses Mandiri Ruangan ATK (Self-Checkout Pegawai)
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">
+                                Opsi 1-2-3 Aktif
+                            </span>
+                        </h4>
+                        <p className="text-xs text-secondary-600 dark:text-secondary-300 mt-0.5 max-w-2xl leading-relaxed">
+                            Ruangan ATK bebas diakses semua pegawai? Pegawai dapat mencatat pengambilan barang dalam 5 detik via HP (Scan QR Code) atau melalui tablet layar sentuh di meja ruangan.
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                    <Link to="/atk/poster-qr">
+                        <Button size="sm" variant="outline" className="text-xs">
+                            <Printer className="h-3.5 w-3.5 mr-1.5" />
+                            Cetak Poster QR
+                        </Button>
+                    </Link>
+                    <Link to="/atk/ambil?mode=kiosk">
+                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
+                            <Monitor className="h-3.5 w-3.5 mr-1.5" />
+                            Buka Kios Tablet
+                        </Button>
+                    </Link>
                 </div>
             </div>
 

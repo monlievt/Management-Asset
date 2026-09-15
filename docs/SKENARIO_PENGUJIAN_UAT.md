@@ -187,23 +187,38 @@
 
 ---
 
+### MODUL 18: SISTEM AMBIL ATK MANDIRI (SELF-CHECKOUT KIOSK & POSTER QR)
+
+| ID Uji | Kasus Uji | Langkah Pengujian | Hasil yang Diharapkan | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **TC-ATK-01** | Tombol Cepat Header & Sidebar (Opsi 3) | Klik tombol oranye **"Ambil ATK"** di Header atas atau menu **"Ambil ATK Mandiri"** di Sidebar. | Sistem langsung membuka halaman antarmuka Self-Checkout ATK (`/assets/atk/checkout` atau `/atk/ambil`) dengan responsif. | **PASS** |
+| **TC-ATK-02** | Pencarian Pegawai & Smart Remember (Opsi 1) | Buka `/atk/ambil?source=qr`, cari nama pegawai (misal: "Nandito"), lalu pilih. | Nama dan identitas pegawai langsung terpilih dan tersimpan di memori perangkat HP (*localStorage*) untuk transaksi berikutnya tanpa perlu ketik ulang. | **PASS** |
+| **TC-ATK-03** | Penambahan Barang & Validasi Stok | Klik `+` pada item ATK (misal: Kertas HVS A4 80gr dan Pulpen Pilot G-2), periksa stok fisik real-time. | Jumlah barang di keranjang bertambah, batas maksimal pengambilan dibatasi sesuai stok riil gudang (tidak bisa minus). | **PASS** |
+| **TC-ATK-04** | 1-Tap Preset Keperluan | Klik salah satu tombol preset (misal: *Penyusunan & Penggandaan LHP*). | Kolom catatan keperluan langsung terisi otomatis dalam 1 kali sentuh tanpa perlu mengetik manual. | **PASS** |
+| **TC-ATK-05** | Transaksi Checkout & Potong Stok Otomatis | Klik tombol **"Konfirmasi & Catat Pengambilan ATK"**. | Stok pada `simtik_stock_atk` langsung berkurang, tercatat pada riwayat mutasi OUT (`simtik_stock_atk_history`), terkirim ke audit log forensik APIP, dan muncul modal sukses. | **PASS** |
+| **TC-ATK-06** | Mode Kios Tablet & Auto-Reset (Opsi 2) | Buka `/atk/ambil?mode=kiosk`, lakukan transaksi pengambilan, dan amati layar sukses. | Layar menampilkan ucapan terima kasih dan melakukan hitung mundur otomatis 5 detik, lalu mereset formulir ke kondisi standby untuk pengguna selanjutnya. | **PASS** |
+| **TC-ATK-07** | Cetak Poster Resmi QR Code Ruangan A4 | Buka menu `/atk/poster-qr` atau klik **"Poster QR Ruangan"** di Stock Opname, lalu klik Cetak. | Muncul lembar cetak standar A4 ber-Kop resmi Pemerintah Kabupaten Trenggalek - Inspektorat Daerah lengkap dengan QR Code resolusi tinggi dan instruksi visual 3 langkah. | **PASS** |
+
+---
+
 ## 3. LEMBAR REKAPITULASI HASIL PENGUJIAN (TEST SUMMARY)
 
-- **Total Modul Diuji**: 17 Modul Sistem
-- **Total Kasus Uji (Test Cases)**: 56 Kasus Uji
-- **Jumlah Kasus Lolos (Passed)**: 56 Kasus Uji (100%)
+- **Total Modul Diuji**: 18 Modul Sistem
+- **Total Kasus Uji (Test Cases)**: 63 Kasus Uji
+- **Jumlah Kasus Lolos (Passed)**: 63 Kasus Uji (100%)
 - **Jumlah Kasus Gagal (Failed)**: 0 Kasus Uji (0%)
 - **Jumlah Catatan Kritis (Blockers)**: 0 Isu
 
 ### Kesimpulan Tim Penguji
-Aplikasi **SIM-TIK v2.4 Enterprise (Fullstack Architecture)** telah memenuhi seluruh kriteria kelayakan operasional tingkat enterprise:
+Aplikasi **SIM-TIK v2.5 Enterprise (Fullstack Architecture)** telah memenuhi seluruh kriteria kelayakan operasional tingkat enterprise:
 1. Kepatuhan hukum penatausahaan BMD pemerintah (Permendagri No. 47 Tahun 2021 & PSAP No. 07).
 2. Kesiapan audit forensik pengawasan intern (**APIP & BPK**) dengan rekaman *immutable audit trail*.
 3. Manajemen master data 70 Pegawai ASN Inspektorat Kabupaten Trenggalek (CRUD lengkap, proteksi integritas pemegang aset, dan ekspor spreadsheet).
 4. Pusat Data Master Sistem terpusat (Editor Unit Kerja dengan auto-cascade, Master Ruangan KIR, Kategori Aset TIK, dan Pejabat Penandatangan Dokumen Resmi).
-5. Pelacakan anggaran belanja modal APBD (±Rp 10 Miliar) berbasis DPA, SP2D, dan nomor kontrak.
-6. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
-7. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
+5. Sistem Pengambilan ATK Mandiri (Kombinasi Opsi 1 Scan QR Poster HP, Opsi 2 Mode Kios Tablet Auto-Reset, dan Opsi 3 Tombol Pintas Terintegrasi).
+6. Pelacakan anggaran belanja modal APBD (±Rp 10 Miliar) berbasis DPA, SP2D, dan nomor kontrak.
+7. Konsistensi tampilan 100% pada tema gelap (*consistent dark mode*) di seluruh modul tanpa cacat visual.
+8. Kestabilan operasional pada server VPS Webmin/Virtualmin dengan proteksi berkas sensitif dan skrip deployment terotomasi.
 
 **REKOMENDASI: SISTEM DINYATAKAN SANGAT LAYAK, AMAN, DAN SIAP DIGUNAKAN PENUH DI LINGKUNGAN INSPEKTORAT KABUPATEN TRENGGALEK.**
 

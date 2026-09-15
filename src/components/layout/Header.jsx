@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Bell, User, LogOut, Settings, ChevronDown, Sun, Moon, Menu, Sparkles } from "lucide-react"
+import { Bell, User, LogOut, Settings, ChevronDown, Sun, Moon, Menu, Sparkles, ShoppingCart } from "lucide-react"
 import { Button } from "../ui/Button"
 import { useUser } from "../../context/UserContext"
 import { useTheme } from "../../context/ThemeContext"
@@ -72,8 +72,18 @@ export function Header({ onToggleMobileSidebar }) {
                 </div>
             </div>
 
-            {/* Bagian Kanan: Dark Mode Toggle, Notifikasi, Profil User */}
+            {/* Bagian Kanan: Shortcut Ambil ATK, Dark Mode Toggle, Notifikasi, Profil User */}
             <div className="flex items-center space-x-2 sm:space-x-3">
+                {/* Tombol Cepat Ambil ATK Mandiri (Self-Checkout) */}
+                <Link
+                    to="/atk/ambil"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition text-xs font-bold shadow-xs active:scale-95"
+                    title="Buka Kios Pengambilan ATK Mandiri (Self-Checkout 5 Detik)"
+                >
+                    <ShoppingCart className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="hidden sm:inline">Ambil ATK</span>
+                </Link>
+
                 {/* Tombol Toggle Dark / Light Mode */}
                 <button
                     type="button"

@@ -533,6 +533,58 @@ Untuk menjamin keabsahan hukum dokumen yang diterbitkan oleh sistem:
 
 ---
 
+## BAB 15: SISTEM AMBIL ATK MANDIRI (SELF-CHECKOUT KIOSK & QR CODE)
+
+Mengingat ruangan penyimpanan ATK di kantor Inspektorat dapat diakses bebas oleh seluruh pegawai, SIM-TIK menghadirkan modul **Ambil ATK Mandiri (Self-Checkout)** yang mengintegrasikan 3 metode akses praktis sekaligus agar pencatatan barang habis pakai berlangsung dalam hitungan detik (< 5 detik) tanpa birokrasi berbelit.
+
+### 15.1 Tiga Metode Akses Terpadu (Kombinasi Opsi 1, 2, dan 3)
+1. **Opsi 1: Scan QR Code Pintu / Rak Ruangan ATK (Akses Mobile HP Pegawai)**
+   - Poster resmi A4 berperekat ditempel di daun pintu masuk atau rak lemari ATK kantor.
+   - Pegawai cukup mengarahkan kamera smartphone / aplikasi pemindai QR ke poster tersebut.
+   - Browser HP otomatis membuka halaman checkout mandiri (`/atk/ambil?source=qr`).
+   - Sistem memiliki fitur *Smart Remember*: Nama pegawai otomatis tersimpan di HP setelah pemakaian pertama, sehingga pada pengambilan berikutnya pegawai hanya perlu memilih barang tanpa mengetik nama lagi.
+2. **Opsi 2: Mode Kios Standby Tablet / Komputer Ruangan ATK (`?mode=kiosk`)**
+   - Tablet layar sentuh atau laptop standby diletakkan di atas meja dalam ruangan ATK.
+   - Halaman checkout diatur dalam **Mode Kios**:
+     - Tampilan layar penuh (*immersive fullscreen*) dengan tombol dan font ekstra besar yang nyaman disentuh jari.
+     - Proteksi keluar dengan tombol PIN/Akses Admin.
+     - **Auto-Reset Countdown (5 Detik)**: Setelah transaksi berhasil, layar menampilkan ucapan terima kasih beserta ringkasan barang, lalu otomatis melakukan hitung mundur 5 detik dan mereset layar kembali bersih untuk pegawai berikutnya.
+3. **Opsi 3: Tombol Cepat (Direct Shortcut) Terintegrasi di Aplikasi Utama**
+   - **Header Atas**: Tombol berlatar oranye terang **"Ambil ATK"** dengan ikon troli di samping tombol mode gelap (*Dark Mode*).
+   - **Sidebar Menu**: Tautan langsung **"Ambil ATK Mandiri"** di bawah kategori Manajemen Aset.
+   - **Banner Modul Stock Opname**: Spanduk interaktif *Callout Banner* di halaman Stock Opname ATK (`/assets/atk`) yang dilengkapi tombol cepat **"Kios Ambil Mandiri"** dan **"Poster QR Ruangan"**.
+
+### 15.2 Alur Transaksi Checkout Mandiri 4 Langkah Cepat
+1. **Pilih Nama Pegawai (Otomatis / Cepat)**:
+   - Terdeteksi otomatis dari akun login SIM-TIK atau riwayat checkout di HP.
+   - Dapat dicari cepat lewat kolom pencarian cerdas yang memuat 70 pegawai resmi Inspektorat Trenggalek beserta NIP dan jabatannya.
+2. **Katalog Visual Barang & Keranjang Belanja**:
+   - Menampilkan 18 item ATK standar kantor (Kertas PaperOne A4/F4, Pulpen Pilot G-2, Box File Bantex, Map Snelhecter, Tinta Printer Epson, Post-It, Lakban, Baterai, dsb.).
+   - Dilengkapi filter kategori cepat (*Kertas & Cetak*, *Alat Tulis*, *Pengarsipan*, *Perekat*, *Elektronik*), indikator stok fisik real-time, dan tombol `+` / `-` yang responsif.
+3. **Pilihan Cepat Keperluan Pemakaian (1-Tap Preset)**:
+   - Pegawai tidak perlu mengetik panjang; cukup klik salah satu preset tombol cepat:
+     - *Tugas Pengawasan / Audit Lapangan*
+     - *Penyusunan & Penggandaan LHP*
+     - *Operasional Rutin Sekretariat*
+     - *Rapat / Ekspose Dinas*
+     - *Penunjang Kerja Harian*
+4. **Konfirmasi & Pengurangan Stok Otomatis**:
+   - Klik tombol besar **"Konfirmasi & Catat Pengambilan ATK"**.
+   - Stok fisik pada basis data inventaris SIM-TIK (`simtik_stock_atk`) seketika berkurang secara real-time.
+   - Transaksi tercatat pada Riwayat Mutasi Barang Keluar (`simtik_stock_atk_history`) dan Jejak Audit Forensik APIP (`AUDIT_LOGS`).
+
+### 15.3 Cetak Poster QR Code Resmi A4 untuk Ruangan ATK
+- Buka tautan `/atk/poster-qr` atau klik tombol **"Poster QR Ruangan"** di halaman Stock Opname.
+- Halaman siap cetak berformat standar A4 menyajikan:
+  - **Kop Surat Kedinasan Resmi** Pemerintah Kabupaten Trenggalek - Inspektorat Daerah.
+  - Judul resmi **"KIOS AMBIL ATK MANDIRI (SELF-CHECKOUT)"**.
+  - Kode QR resolusi tinggi (High-DPI) yang dinamis merujuk ke alamat server aplikasi.
+  - Panduan 3 langkah visual: *1. Pindai QR Code*, *2. Pilih Nama & Barang*, *3. Klik Selesai*.
+  - Catatan himbauan kejujuran kedinasan: *"Kejujuran dan ketertiban pencatatan barang milik daerah mencerminkan integritas aparatur pengawasan intern pemerintah"*.
+  - Tombol **"Cetak Poster A4 (Ctrl+P)"** yang otomatis memicu dialog cetak browser dengan styling media print yang rapi tanpa elemen navigasi browser.
+
+---
+
 ## KESIMPULAN & DUKUNGAN TEKNIS
-Aplikasi **SIM-TIK v2.4 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, master data kepegawaian ASN terpadu, serta fleksibilitas pusat data master yang dinamis. Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
+Aplikasi **SIM-TIK v2.5 Enterprise** telah memenuhi seluruh standar regulasi, tata kelola barang milik daerah/negara, keamanan data audit trail forensik, transparansi anggaran APBD, master data kepegawaian ASN terpadu, fleksibilitas pusat data master yang dinamis, serta sistem self-checkout ATK mandiri ruangan yang modern dan akuntabel. Untuk kendala operasional lebih lanjut, silakan hubungi Tim Pengelola Sistem Informasi & Aset TIK Inspektorat Kabupaten Trenggalek.
 

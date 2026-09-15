@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils"
 import {
     LayoutDashboard, Monitor, LifeBuoy, Settings, ChevronDown,
     ChevronRight, Layers, Archive, X, Laptop, ShieldCheck, Users,
-    Sparkles
+    Sparkles, ShoppingCart
 } from "lucide-react"
 import { useState } from "react"
 import { ReleaseNotesModal } from "../common/ReleaseNotesModal"
@@ -18,6 +18,7 @@ const sidebarItems = [
             { icon: Laptop, label: "Perangkat TIK", href: "/assets/devices" },
             { icon: Layers, label: "Inventaris Umum", href: "/assets/inventory" },
             { icon: Archive, label: "Stok Opname ATK", href: "/assets/atk" },
+            { icon: ShoppingCart, label: "Ambil ATK Mandiri", href: "/atk/ambil" },
         ]
     },
     { icon: Users, label: "Manajemen Pegawai", href: "/employees" },
