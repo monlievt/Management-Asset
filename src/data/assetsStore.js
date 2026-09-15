@@ -522,3 +522,158 @@ export function getAssetsByRoom(roomName) {
     return assets.filter(a => a.lokasi && a.lokasi.trim().toLowerCase() === roomName.trim().toLowerCase())
 }
 
+// =========================================================================
+// ASYNCHRONOUS ENTERPRISE API METHODS (Backend Server Integration)
+// =========================================================================
+
+function getAuthHeader() {
+    const token = sessionStorage.getItem('simtik_auth_token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
+/** Sinkronisasi data aset dari Backend API ke cache lokal */
+export async function syncAssetsFromApi() {
+    try {
+        const res = await fetch('/api/assets', {
+            headers: { ...getAuthHeader() }
+        });
+        if (res.ok) {
+            const result = await res.json();
+            if (result.success && Array.isArray(result.data)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(result.data));
+                localStorage.setItem("simtik_assets", JSON.stringify(result.data));
+                return result.data;
+            }
+        }
+    } catch (err) {
+        console.warn("[API_SYNC] Gagal menghubungi backend API, menggunakan data lokal:", err);
+    }
+    return getAssets();
+}
+
+/** Simpan atau perbarui aset melalui Backend API */
+export async function saveAssetApi(assetData) {
+    try {
+        const isEdit = Boolean(assetData.id);
+        const url = isEdit ? `/api/assets/${assetData.id}` : '/api/assets';
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify(assetData)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+            saveAsset(data.data);
+            return data.data;
+        }
+        throw new Error(data.message || 'Gagal menyimpan aset ke server');
+    } catch (err) {
+        console.warn("[API_SAVE] Gagal via API, menyimpan ke lokal:", err);
+        return saveAsset(assetData);
+    }
+}
+
+/** Hapus aset melalui Backend API */
+export async function deleteAssetApi(id) {
+    try {
+        const res = await fetch(`/api/assets/${id}`, {
+            method: 'DELETE',
+            headers: { ...getAuthHeader() }
+        });
+        if (res.ok) {
+            return deleteAsset(id);
+        }
+    } catch (err) {
+        console.warn("[API_DELETE] Gagal via API, menghapus dari lokal:", err);
+    }
+    return deleteAsset(id);
+}
+
+/** Mutasi serah terima aset ke pegawai baru melalui API */
+export async function assignAssetToEmployeeApi(assetId, custodyPayload) {
+    try {
+        const res = await fetch(`/api/assets/${assetId}/custody`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify(custodyPayload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            saveAsset(data.data);
+            return data.data;
+        }
+    } catch (err) {
+        console.warn("[API_CUSTODY] Gagal via API, memproses di lokal:", err);
+    }
+    return assignAssetToEmployee(assetId, custodyPayload);
+}
+
+/** Penarikan aset ke gudang melalui API */
+export async function returnAssetToWarehouseApi(assetId, returnPayload) {
+    try {
+        const res = await fetch(`/api/assets/${assetId}/return`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify(returnPayload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            saveAsset(data.data);
+            return data.data;
+        }
+    } catch (err) {
+        console.warn("[API_RETURN] Gagal via API, memproses di lokal:", err);
+    }
+    return returnAssetToWarehouse(assetId, returnPayload);
+}
+
+/** Catat servis / kapitalisasi nilai aset melalui API */
+export async function addMaintenanceRecordApi(assetId, maintenancePayload) {
+    try {
+        const res = await fetch(`/api/assets/${assetId}/maintenance`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify(maintenancePayload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            saveAsset(data.data);
+            return data.data;
+        }
+    } catch (err) {
+        console.warn("[API_MAINTENANCE] Gagal via API, memproses di lokal:", err);
+    }
+    return addMaintenanceRecord(assetId, maintenancePayload);
+}
+
+/** Ambil jejak audit forensik dari backend */
+export async function fetchAuditLogsApi(params = {}) {
+    try {
+        const qs = new URLSearchParams(params).toString();
+        const res = await fetch(`/api/audit-logs?${qs}`, {
+            headers: { ...getAuthHeader() }
+        });
+        if (res.ok) {
+            return await res.json();
+        }
+    } catch (err) {
+        console.warn("[API_AUDIT] Gagal mengambil log audit:", err);
+    }
+    return { success: false, data: [] };
+}
+

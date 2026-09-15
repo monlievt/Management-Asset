@@ -18,6 +18,7 @@ import AssetEdit from "./pages/AssetEdit"
 import AssetDetailView from "./pages/AssetDetailView"
 import BastPrintView from "./pages/BastPrintView"
 import KirPrintView from "./pages/KirPrintView"
+import AuditTrailView from "./pages/AuditTrailView"
 
 function App() {
   return (
@@ -58,8 +59,9 @@ function App() {
         <Route path="assets/atk" element={<StockOpname />} />
         <Route path="assets/atk/history" element={<StockHistory />} />
 
-        {/* Modul Helpdesk & Pengaturan */}
+        {/* Modul Helpdesk, Audit Trail & Pengaturan */}
         <Route path="helpdesk" element={<Helpdesk />} />
+        <Route path="audit-trail" element={<AuditTrailView />} />
         <Route path="settings" element={<Settings />} />
 
         {/* Catch-all route untuk halaman tidak ditemukan di dalam dashboard */}

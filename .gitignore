@@ -22,3 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+
+# Database & Local Storage
+data/*.db
+data/*.db-wal
+data/*.db-shm
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# User Uploaded Media
+uploads/
+server/uploads/
+

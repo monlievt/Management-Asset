@@ -30,34 +30,52 @@ export default function Login() {
         setIsLoading(true)
 
         try {
+            // 1. Coba otentikasi ke Backend Server Terpusat
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: email, password })
+            })
+
+            const data = await res.json()
+
+            if (res.ok && data.success) {
+                // Simpan token JWT dan identitas pengguna
+                sessionStorage.setItem('simtik_auth_token', data.token)
+                sessionStorage.setItem('simtik_user_details', JSON.stringify(data.user))
+                updateUser(data.user)
+                navigate("/")
+                return
+            } else if (res.status === 401 || res.status === 400) {
+                setError(data.message || "Email/NIP atau kata sandi tidak valid.")
+                setIsLoading(false)
+                return
+            }
+        } catch (apiErr) {
+            console.warn("Backend API offline, beralih ke fallback lokal:", apiErr)
+        }
+
+        // 2. Fallback jika Backend offline (Demo Mode)
+        try {
             const user = getUserByEmail(email)
 
             if (!user) {
-                setError("Email atau password tidak valid.")
+                setError("Email/NIP atau password tidak valid.")
                 setIsLoading(false)
                 return
             }
 
-            // Verifikasi password menggunakan SHA-256 hash comparison
             const isValid = await verifyPassword(password, user.passwordHash)
 
             if (isValid) {
-                // Buat session token unik menggunakan crypto.randomUUID()
                 const sessionToken = crypto.randomUUID()
-
-                // Simpan di sessionStorage (bukan localStorage) agar sesi habis saat browser ditutup
                 sessionStorage.setItem('simtik_auth_token', sessionToken)
-
-                // Simpan data user publik (tanpa passwordHash) ke sessionStorage
                 const { passwordHash, ...publicUser } = user
                 sessionStorage.setItem('simtik_user_details', JSON.stringify(publicUser))
-
-                // Update global context
                 updateUser(publicUser)
-
                 navigate("/")
             } else {
-                setError("Email atau password tidak valid.")
+                setError("Email/NIP atau password tidak valid.")
             }
         } catch (err) {
             console.error("Login error:", err)
