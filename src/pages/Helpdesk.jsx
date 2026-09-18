@@ -10,10 +10,10 @@ import { TicketForm } from "../components/helpdesk/TicketForm"
 import { CanDo } from "../lib/rbac"
 
 const initialTickets = [
-    { id: 1, subject: "Printer in HR not working", requester: "Sarah Jones", priority: "High", status: "Open", date: new Date().toISOString().split('T')[0] },
-    { id: 2, subject: "Need software update", requester: "Mike Brown", priority: "Low", status: "Resolved", date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0] }, // 2 days ago
-    { id: 3, subject: "Wifi connection issues", requester: "All Staff", priority: "High", status: "In Progress", date: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0] }, // 5 days ago
-    { id: 4, subject: "Request for new monitor", requester: "Jane Doe", priority: "Medium", status: "Open", date: new Date(Date.now() - 86400000 * 30).toISOString().split('T')[0] }, // 30 days ago (last month potentially)
+    { id: 1, subject: "Printer Subbagian Kepegawaian tidak merespon cetak", requester: "Subbag Umum & Kepegawaian", priority: "High", status: "Open", date: new Date().toISOString().split('T')[0] },
+    { id: 2, subject: "Pembaruan Aplikasi Siswaskeudes & Siskeudes", requester: "Irban Wilayah I", priority: "Low", status: "Resolved", date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0] },
+    { id: 3, subject: "Kendala Koneksi Wi-Fi Ruang Rapat Utama", requester: "Sekretariat Inspektorat", priority: "High", status: "In Progress", date: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0] },
+    { id: 4, subject: "Permohonan Penggantian Monitor Rusak Berat", requester: "Irban Investigasi", priority: "Medium", status: "Open", date: new Date(Date.now() - 86400000 * 30).toISOString().split('T')[0] },
 ]
 
 export default function Helpdesk() {

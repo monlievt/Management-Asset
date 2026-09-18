@@ -114,7 +114,7 @@ export function DeviceForm({ initialData, onSubmit, onCancel }) {
                     <Input name="category" value={formData.category} onChange={handleChange} placeholder="contoh: Laptop, PC, Server, Printer" required />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Merek / Brand <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Merek Perangkat <span className="text-red-500">*</span></label>
                     <Input name="brand" value={formData.brand} onChange={handleChange} placeholder="contoh: Dell, Lenovo, HP, Asus" required />
                 </div>
                 <div className="space-y-2">
@@ -134,10 +134,10 @@ export function DeviceForm({ initialData, onSubmit, onCancel }) {
                         required
                         className="flex h-10 w-full rounded-md border border-secondary-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white"
                     >
-                        <option value="Available">Tersedia di Gudang (Available)</option>
-                        <option value="In Use">Sedang Digunakan (In Use)</option>
-                        <option value="Maintenance">Dalam Perbaikan (Maintenance)</option>
-                        <option value="Retired">Afkir / Dihapus (Retired)</option>
+                        <option value="Available">Tersedia di Gudang</option>
+                        <option value="In Use">Sedang Digunakan Pegawai</option>
+                        <option value="Maintenance">Dalam Perbaikan / Servis</option>
+                        <option value="Retired">Afkir / Dihapus dari Buku</option>
                     </select>
                 </div>
                 <div className="col-span-2 space-y-2">

@@ -20,12 +20,15 @@ import auditRoutes from './routes/auditRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
+import backupRoutes from './routes/backupRoutes.js';
+import { initBackupScheduler } from './services/backupService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Inisialisasi Database SQLite WAL
+// Inisialisasi Database SQLite WAL & Scheduler Backup
 initDatabase();
+initBackupScheduler();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -80,6 +83,7 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/audit-logs', auditRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/backup', backupRoutes);
 
 // 7. Global Error Handler (AGENTS.md: Never leak stack traces to client)
 app.use((err, req, res, next) => {

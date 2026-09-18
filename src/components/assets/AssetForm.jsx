@@ -237,10 +237,10 @@ export function AssetForm({ onCancel, onSubmit, initialData, suggestions = {} })
                         required
                         className="flex h-8 w-full rounded-md border border-secondary-200 bg-white px-3 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                     >
-                        <option value="Available">Available</option>
-                        <option value="In Use">In Use</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Retired">Retired</option>
+                        <option value="Available">Tersedia di Gudang</option>
+                        <option value="In Use">Sedang Digunakan</option>
+                        <option value="Maintenance">Dalam Perbaikan</option>
+                        <option value="Retired">Afkir / Dihapus</option>
                     </select>
                 </div>
                 <div className="col-span-2 space-y-1">

@@ -216,6 +216,24 @@ export function initDatabase() {
             created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
         );
 
+        -- 12. TABEL PENGATURAN CADANGAN OTOMATIS (BACKUP & NOTIFIKASI TELEGRAM / WAHA)
+        CREATE TABLE IF NOT EXISTS backup_configs (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            schedule TEXT DEFAULT 'daily', -- 'off', 'daily', 'weekly', 'monthly'
+            time_wib TEXT DEFAULT '00:00',
+            telegram_enabled INTEGER DEFAULT 0,
+            telegram_bot_token TEXT DEFAULT '',
+            telegram_chat_id TEXT DEFAULT '',
+            waha_enabled INTEGER DEFAULT 0,
+            waha_api_url TEXT DEFAULT '',
+            waha_session TEXT DEFAULT 'default',
+            waha_target_number TEXT DEFAULT '',
+            last_backup_time TEXT,
+            last_backup_status TEXT,
+            last_backup_message TEXT,
+            updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+        );
+
         -- Indeks untuk mempercepat pencarian
         CREATE INDEX IF NOT EXISTS idx_assets_nup ON assets(nup);
         CREATE INDEX IF NOT EXISTS idx_assets_kode ON assets(kode_barang);
@@ -224,6 +242,12 @@ export function initDatabase() {
         CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp);
         CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_nip);
     `);
+
+    // Inisialisasi baris konfigurasi backup bawaan jika belum ada
+    db.prepare(`
+        INSERT OR IGNORE INTO backup_configs (id, schedule, time_wib, telegram_enabled, waha_enabled)
+        VALUES (1, 'daily', '00:00', 0, 0)
+    `).run();
 
     // Migrasi kolom tabel users secara aman
     const userCols = db.pragma('table_info(users)').map(c => c.name);

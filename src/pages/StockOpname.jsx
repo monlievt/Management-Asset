@@ -546,8 +546,8 @@ export default function StockOpname() {
                     </Button>
                     <Button
                         size="sm"
+                        variant="success"
                         onClick={() => navigate("/atk/ambil?mode=kiosk")}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
                     >
                         <Monitor className="h-3.5 w-3.5 mr-1.5" />
                         Buka Kios Tablet

@@ -346,7 +346,7 @@ export default function AssetNew() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Merk / Brand
+                                    Merek / Pabrikan
                                 </label>
                                 <input
                                     type="text"
@@ -360,7 +360,7 @@ export default function AssetNew() {
 
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Model / Type
+                                    Tipe / Model
                                 </label>
                                 <input
                                     type="text"
@@ -385,10 +385,12 @@ export default function AssetNew() {
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 />
                             </div>
+                        </div>
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Ukuran / Dimensi
+                                    Ukuran / Dimensi Fisik
                                 </label>
                                 <input
                                     type="text"
@@ -413,18 +415,20 @@ export default function AssetNew() {
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 />
                             </div>
+                        </div>
 
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Lokasi Fisik Ruangan (KIR)
+                                    Lokasi Ruangan (KIR) <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="text"
-                                    name="lokasi"
                                     list="rooms-list"
+                                    name="lokasi"
                                     value={formData.lokasi}
                                     onChange={handleChange}
                                     placeholder="Pilih atau ketik nama ruangan..."
+                                    required
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 />
                                 <datalist id="rooms-list">
@@ -433,12 +437,10 @@ export default function AssetNew() {
                                     ))}
                                 </datalist>
                             </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Kondisi Fisik Saat Ini
+                                    Kondisi Fisik Barang <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     name="kondisi"
@@ -446,15 +448,15 @@ export default function AssetNew() {
                                     onChange={handleChange}
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 >
-                                    <option value="Baik">Baik (Normal Berfungsi)</option>
-                                    <option value="Rusak Ringan">Rusak Ringan (Perlu Perawatan Minor)</option>
+                                    <option value="Baik">Baik (Bisa Digunakan Normal)</option>
+                                    <option value="Kurang Baik">Kurang Baik / Rusak Ringan</option>
                                     <option value="Rusak Berat">Rusak Berat (Tidak Berfungsi)</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Status Ketersediaan
+                                    Status Ketersediaan <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     name="status"
@@ -462,7 +464,7 @@ export default function AssetNew() {
                                     onChange={handleChange}
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 >
-                                    <option value="Available">Tersedia di Gudang (Ready to Deploy)</option>
+                                    <option value="Available">Tersedia di Gudang (Siap Pakai)</option>
                                     <option value="In Use">Sedang Digunakan Pegawai</option>
                                     <option value="Maintenance">Dalam Perbaikan / Servis</option>
                                     <option value="Damaged">Rusak / Menunggu Afkir</option>

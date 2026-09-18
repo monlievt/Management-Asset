@@ -38,9 +38,9 @@ export function TicketForm({ onCancel, onSubmit, initialData }) {
                     onChange={handleChange}
                     className="flex h-10 w-full rounded-md border border-secondary-200 bg-white dark:bg-secondary-900 dark:border-secondary-700 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                 >
-                    <option value="Low">Rendah (Low)</option>
-                    <option value="Medium">Sedang (Medium)</option>
-                    <option value="High">Tinggi / Mendesak (High)</option>
+                    <option value="Low">Rendah</option>
+                    <option value="Medium">Sedang</option>
+                    <option value="High">Tinggi / Mendesak</option>
                 </select>
             </div>
             {initialData && (
@@ -52,10 +52,10 @@ export function TicketForm({ onCancel, onSubmit, initialData }) {
                         onChange={handleChange}
                         className="flex h-10 w-full rounded-md border border-secondary-200 bg-white dark:bg-secondary-900 dark:border-secondary-700 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
                     >
-                        <option value="Open">Menunggu Tindak Lanjut (Open)</option>
-                        <option value="In Progress">Sedang Dikerjakan (In Progress)</option>
-                        <option value="Resolved">Selesai Diperbaiki (Resolved)</option>
-                        <option value="Closed">Ditutup (Closed)</option>
+                        <option value="Open">Menunggu Tindak Lanjut</option>
+                        <option value="In Progress">Sedang Dikerjakan</option>
+                        <option value="Resolved">Selesai Diperbaiki</option>
+                        <option value="Closed">Ditutup / Selesai</option>
                     </select>
                 </div>
             )}

@@ -10,17 +10,21 @@ import { cn } from "../lib/utils"
 import { useUser } from "../context/UserContext"
 import { usePermission } from "../lib/rbac"
 import { MasterDataSettings } from "../components/settings/MasterDataSettings"
+import { BackupSettings } from "../components/settings/BackupSettings"
+import { HardDrive } from "lucide-react"
 
 export default function Settings() {
     const { user, updateUser } = useUser()
     const [searchParams, setSearchParams] = useSearchParams()
     const canManageMaster = usePermission("settings.edit")
+    const canManageBackup = user.role === "superadmin" || user.role === "admin" || canManageMaster
 
     const tabParam = searchParams.get("tab")
     const subParam = searchParams.get("sub") || "departments"
 
     const [activeTab, setActiveTab] = useState(
-        tabParam === "master" && canManageMaster ? "master" : (tabParam || "profile")
+        tabParam === "master" && canManageMaster ? "master" :
+        tabParam === "backup" && canManageBackup ? "backup" : (tabParam || "profile")
     )
     const [displayName, setDisplayName] = useState(user.name)
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -30,10 +34,12 @@ export default function Settings() {
     useEffect(() => {
         if (tabParam === "master" && canManageMaster) {
             setActiveTab("master")
-        } else if (tabParam && tabParam !== "master") {
+        } else if (tabParam === "backup" && canManageBackup) {
+            setActiveTab("backup")
+        } else if (tabParam && tabParam !== "master" && tabParam !== "backup") {
             setActiveTab(tabParam)
         }
-    }, [tabParam, canManageMaster])
+    }, [tabParam, canManageMaster, canManageBackup])
 
     // Password Update State
     const [currentPassword, setCurrentPassword] = useState("")
@@ -93,18 +99,22 @@ export default function Settings() {
     const tabs = [
         { id: "profile", label: "Profil Pengguna", icon: User },
         { id: "security", label: "Keamanan & Kata Sandi", icon: Lock },
-        ...(canManageMaster ? [{ id: "master", label: "Data Master Sistem", icon: Database }] : [])
+        ...(canManageMaster ? [{ id: "master", label: "Data Master Sistem", icon: Database }] : []),
+        ...(canManageBackup ? [{ id: "backup", label: "Cadangan & Notifikasi", icon: HardDrive }] : [])
     ]
 
     return (
         <div className="space-y-6">
             <div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-secondary-900 dark:text-white">
-                    {activeTab === "master" ? "Pusat Data Master Sistem" : "Pengaturan Akun"}
+                    {activeTab === "master" ? "Pusat Data Master Sistem" :
+                     activeTab === "backup" ? "Cadangan Data & Integrasi" : "Pengaturan Akun"}
                 </h2>
                 <p className="mt-1 text-sm text-secondary-500 dark:text-secondary-400">
                     {activeTab === "master"
                         ? "Kelola data referensi Unit Kerja, Master Ruangan Dinas (KIR), Kategori Aset, dan Pejabat Penandatangan Dokumen."
+                        : activeTab === "backup"
+                        ? "Cadangan basis data SQLite WAL, integrasi bot Telegram, WAHA WhatsApp, dan unduh berkas arsip."
                         : "Kelola identitas profil, email, dan keamanan akses kata sandi SIM-TIK."}
                 </p>
             </div>
@@ -137,7 +147,7 @@ export default function Settings() {
                     </nav>
                 </aside>
 
-                <div className={cn("flex-1 min-w-0", activeTab === "master" ? "w-full" : "lg:max-w-2xl")}>
+                <div className={cn("flex-1 min-w-0", activeTab === "master" || activeTab === "backup" ? "w-full" : "lg:max-w-2xl")}>
                     {activeTab === "profile" && (
                         <Card>
                             <CardHeader>
@@ -254,6 +264,10 @@ export default function Settings() {
 
                     {activeTab === "master" && canManageMaster && (
                         <MasterDataSettings initialSubTab={subParam} />
+                    )}
+
+                    {activeTab === "backup" && canManageBackup && (
+                        <BackupSettings />
                     )}
                 </div>
             </div>

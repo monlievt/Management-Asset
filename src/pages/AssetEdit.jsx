@@ -323,7 +323,7 @@ export default function AssetEdit() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-secondary-700 dark:text-secondary-300 mb-1">
-                                    Merk / Brand
+                                    Merek / Pabrikan
                                 </label>
                                 <input
                                     type="text"
@@ -434,7 +434,7 @@ export default function AssetEdit() {
                                     onChange={handleChange}
                                     className="w-full px-3.5 py-2.5 rounded-lg border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                 >
-                                    <option value="Available">Tersedia di Gudang (Ready to Deploy)</option>
+                                    <option value="Available">Tersedia di Gudang (Siap Pakai)</option>
                                     <option value="In Use">Sedang Digunakan Pegawai</option>
                                     <option value="Maintenance">Dalam Perbaikan / Servis</option>
                                     <option value="Damaged">Rusak / Menunggu Afkir</option>

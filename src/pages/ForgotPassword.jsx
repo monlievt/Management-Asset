@@ -32,12 +32,12 @@ export default function ForgotPassword() {
                     )}
                 </div>
                 <CardTitle className="text-2xl font-bold tracking-tight text-secondary-900">
-                    {isSubmitted ? "Check your email" : "Forgot password?"}
+                    {isSubmitted ? "Periksa Email Anda" : "Lupa Kata Sandi?"}
                 </CardTitle>
                 <p className="text-sm text-secondary-500">
                     {isSubmitted
-                        ? "We've sent a password reset link to your email."
-                        : "Enter your email address and we'll send you a link to reset your password."}
+                        ? "Petunjuk pemulihan akses telah dikirimkan ke alamat email kedinasan Anda."
+                        : "Masukkan alamat email kedinasan Anda untuk memproses pemulihan kata sandi akun SIM-TIK."}
                 </p>
             </CardHeader>
             <CardContent>
@@ -45,36 +45,36 @@ export default function ForgotPassword() {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium leading-none text-secondary-700" htmlFor="email">
-                                Email
+                                Alamat Email Kedinasan
                             </label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="name@example.com"
+                                placeholder="pegawai@inspektorat.trenggalekkab.go.id"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
                         </div>
                         <Button className="w-full" type="submit" isLoading={isLoading}>
-                            Send Reset Link
+                            Kirim Tautan Pemulihan
                         </Button>
                     </form>
                 ) : (
                     <div className="text-center space-y-4">
                         <p className="text-sm text-secondary-700 font-medium">
-                            Fitur reset password otomatis belum tersedia.
+                            Fitur reset kata sandi otomatis via email belum diaktifkan.
                         </p>
                         <p className="text-sm text-secondary-600">
-                            Silakan hubungi <strong>Admin SIM-TIK</strong> untuk mereset password Anda.
+                            Silakan hubungi <strong>Administrator TIK / Subbagian Umum</strong> untuk mereset kata sandi akun Anda.
                         </p>
                         <div className="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 text-left text-sm text-blue-800">
-                            <p className="font-medium mb-1">Cara mereset password:</p>
+                            <p className="font-medium mb-1">Alur pemulihan kata sandi:</p>
                             <ol className="list-decimal list-inside space-y-1">
-                                <li>Hubungi Admin melalui Subbagian Umum</li>
-                                <li>Minta reset password akun SIM-TIK</li>
-                                <li>Gunakan password sementara yang diberikan</li>
-                                <li>Ganti password di menu Settings setelah login</li>
+                                <li>Hubungi Petugas TIK / Pengelola Barang</li>
+                                <li>Verifikasi identitas dan NIP Anda</li>
+                                <li>Gunakan kata sandi sementara yang diterbitkan</li>
+                                <li>Ubah kata sandi pada menu Pengaturan Akun setelah berhasil masuk</li>
                             </ol>
                         </div>
                         <Button
@@ -90,7 +90,7 @@ export default function ForgotPassword() {
             <CardFooter className="justify-center">
                 <Link to="/login" className="flex items-center text-sm font-medium text-secondary-600 hover:text-secondary-900">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Login
+                    Kembali ke Halaman Masuk
                 </Link>
             </CardFooter>
         </Card>
