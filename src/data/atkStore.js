@@ -273,8 +273,11 @@ export function getAtkStocks() {
  * Menyimpan seluruh data stok ATK
  */
 export function saveAtkStocks(stocks) {
-    localStorage.setItem(STORAGE_KEY_STOCKS, JSON.stringify(stocks))
-    window.dispatchEvent(new Event("storage"))
+    try {
+        localStorage.setItem(STORAGE_KEY_STOCKS, JSON.stringify(stocks))
+    } catch (err) {
+        console.error("Gagal menyimpan stok ATK:", err)
+    }
 }
 
 /**
@@ -294,8 +297,11 @@ export function getAtkHistory() {
  * Menyimpan seluruh riwayat mutasi ATK
  */
 export function saveAtkHistory(history) {
-    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history))
-    window.dispatchEvent(new Event("storage"))
+    try {
+        localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history))
+    } catch (err) {
+        console.error("Gagal menyimpan riwayat mutasi ATK:", err)
+    }
 }
 
 /**

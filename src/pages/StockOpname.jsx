@@ -255,23 +255,18 @@ export default function StockOpname() {
     const [stocks, setStocks] = useState(() => getAtkStocks())
     const [history, setHistory] = useState(() => getAtkHistory())
 
-    // Sinkronisasi otomatis jika ada transaksi dari Kios Mandiri / Mobile QR
+    // Sinkronisasi otomatis jika ada transaksi dari Kios Mandiri / Mobile QR pada tab/jendela lain
     useEffect(() => {
-        const handleStorage = () => {
+        const handleStorage = (e) => {
+            if (e && e.key && e.key !== "simtik_stock_atk" && e.key !== "simtik_stock_atk_history") {
+                return
+            }
             setStocks(getAtkStocks())
             setHistory(getAtkHistory())
         }
         window.addEventListener("storage", handleStorage)
         return () => window.removeEventListener("storage", handleStorage)
     }, [])
-
-    useEffect(() => {
-        saveAtkStocks(stocks)
-    }, [stocks])
-
-    useEffect(() => {
-        saveAtkHistory(history)
-    }, [history])
 
     const [searchTerm, setSearchTerm] = useState("")
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -286,6 +281,8 @@ export default function StockOpname() {
     const handleSave = (data, type) => {
         const today = new Date().toISOString().split('T')[0]
         const timestamp = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })
+
+        let updatedStocksList = [...stocks]
 
         // 1. Transaction Logic (Update Stock)
         if (selectedItem && selectedItem.id) {
@@ -306,7 +303,7 @@ export default function StockOpname() {
                 return
             }
 
-            setStocks(stocks.map(s => s.id === selectedItem.id ? updatedItem : s))
+            updatedStocksList = stocks.map(s => s.id === selectedItem.id ? updatedItem : s)
         } else {
             // NEW INCOMING TRANSACTION
             // Check if item with same name and brand already exists
@@ -333,7 +330,7 @@ export default function StockOpname() {
                     quantity: updatedQuantity,
                     lastUpdate: today,
                 }
-                setStocks(stocks.map(s => s.id === existingItem.id ? updatedItem : s))
+                updatedStocksList = stocks.map(s => s.id === existingItem.id ? updatedItem : s)
             } else {
                 if (type === 'outgoing') {
                     alert("Kesalahan: Barang tidak ditemukan! Tidak dapat mencatat pengeluaran untuk barang yang belum terdaftar di master persediaan.");
@@ -341,12 +338,12 @@ export default function StockOpname() {
                 }
                 // Completely New Item
                 const newCode = generateCode()
-                setStocks([...stocks, {
+                updatedStocksList = [...stocks, {
                     id: Date.now(),
                     ...data,
                     code: newCode,
                     lastUpdate: today
-                }])
+                }]
             }
         }
 
@@ -362,7 +359,13 @@ export default function StockOpname() {
             notes: type === 'outgoing' ? data.notes : (selectedItem ? 'Pembaruan Stok' : 'Pemasukan Stok Baru'),
             user: "Admin"
         }
-        setHistory([newRecord, ...history])
+        const updatedHistoryList = [newRecord, ...history]
+
+        // Simpan langsung ke localStorage dan sinkronkan state lokal
+        saveAtkStocks(updatedStocksList)
+        saveAtkHistory(updatedHistoryList)
+        setStocks(updatedStocksList)
+        setHistory(updatedHistoryList)
 
         setIsModalOpen(false)
         setSelectedItem(null)
@@ -370,7 +373,9 @@ export default function StockOpname() {
 
     const handleDelete = (id) => {
         if (window.confirm("Apakah Anda yakin ingin menghapus barang ini dari daftar persediaan ATK?")) {
-            setStocks(stocks.filter(s => s.id !== id))
+            const updated = stocks.filter(s => s.id !== id)
+            saveAtkStocks(updated)
+            setStocks(updated)
         }
     }
 
