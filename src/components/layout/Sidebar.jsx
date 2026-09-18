@@ -148,7 +148,7 @@ export function Sidebar({ className, isMobileOpen = false, onCloseMobile = () =>
                     <div className="flex items-center justify-between">
                         <p className="text-[11px] font-bold text-secondary-900 dark:text-white flex items-center gap-1.5">
                             <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
-                            SIM-TIK v2.5 Enterprise
+                            SIM-TIK v2.6 Enterprise
                         </p>
                         <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-semibold">
                             Terupdate

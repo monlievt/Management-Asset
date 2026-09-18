@@ -1,10 +1,25 @@
 # CATATAN RILIS RESMI (OFFICIAL RELEASE NOTES)
-## SIM-TIK v2.5.0 Enterprise Edition
+## SIM-TIK v2.6.0 Enterprise Edition
 **Sistem Informasi Manajemen Aset & Logistik TIK — Inspektorat Kabupaten Trenggalek**  
-*Tanggal Rilis: 15 September 2026*  
+*Tanggal Rilis: 18 September 2026*  
 *Basis Regulasi: Permendagri No. 47 Tahun 2021 & PSAP No. 07*
 
 ---
+
+### RINGKASAN PEMBARUAN VERSI 2.6.0
+
+Versi **2.6.0 Enterprise** menghadirkan pembaruan besar pada keandalan infrastruktur dan kemudahan akses operasional harian:
+1. **Pencadangan Otomatis Basis Data (SQLite WAL)**: Integrasi bot Telegram (`sendDocument`), gateway WhatsApp WAHA (`sendText` & `sendFile`), tombol unduh instan berkas fisik `.db`, serta penjadwalan otomatis internal server (Harian/Mingguan/Bulanan).
+2. **Kios Pengambilan ATK Mandiri (Self-Checkout 5 Detik)**: Akses mandiri ruangan ATK bagi seluruh pegawai melalui Kios Tablet Layar Sentuh dan Poster Scan QR Code HP tanpa login rumit dengan sinkronisasi mutasi stok instan.
+3. **Pembersihan Bahasa (100% Bahasa Indonesia Baku)**: Penertiban seluruh isian formulir, status aset, modul bantuan, dan pemulihan kata sandi agar selaras dengan tata naskah dinas pemerintah daerah.
+4. **Standardisasi Button Design System**: Penyeragaman border-radius kelengkungan tombol `rounded-lg` (8px), varian warna hijau emerald `variant="success"`, serta konsistensi tinggi dan efek mikro interaksi.
+5. **Perbaikan Siklus Navigasi (Infinite Loop Bugfix)**: Menuntaskan siklus render berlebih pada halaman Stok Opname sehingga seluruh menu link dan navigasi router berjalan sangat responsif.
+
+---
+
+## ARSIP RILIS SEBELUMNYA:
+### SIM-TIK v2.5.0 Enterprise Edition
+*Tanggal Rilis: 15 September 2026*
 
 ### RINGKASAN PEMBARUAN VERSI 2.5.0
 

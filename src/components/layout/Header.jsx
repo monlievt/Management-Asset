@@ -63,7 +63,7 @@ export function Header({ onToggleMobileSidebar }) {
                             title="Klik untuk melihat Catatan Rilis & Fitur Terupdate"
                         >
                             <Sparkles className="h-3 w-3 text-amber-500" />
-                            <span>v2.5 Enterprise</span>
+                            <span>v2.6 Enterprise</span>
                         </button>
                     </div>
                     <p className="text-[11px] text-secondary-500 dark:text-secondary-400 hidden sm:block">

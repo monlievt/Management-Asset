@@ -68,7 +68,7 @@ app.get('/api/health', (req, res) => {
         status: 'healthy',
         service: 'SIM-TIK Backend API',
         agency: 'Inspektorat Kabupaten Trenggalek',
-        version: '2.4.0-enterprise',
+        version: '2.6.0-enterprise',
         database: 'SQLite WAL Mode',
         timestamp: new Date().toISOString()
     });
